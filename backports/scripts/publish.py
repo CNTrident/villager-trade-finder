@@ -37,15 +37,16 @@ sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True,cwd=ROOT).strip
 remote=api(BASE+'/commits/main')
 assert remote['sha']==sha,'Local commit is not on remote main'
 body=(ROOT/'release-notes.md').read_text(encoding='utf8')
+release_fields={'tag_name':'v1.8.0','target_commitish':sha,
+                'name':'Villager Trade Finder 1.8.0 - Minecraft 1.20-1.21.11 + 26.x',
+                'body':body}
 try:release=api(BASE+'/releases/tags/v1.8.0')
 except urllib.error.HTTPError as error:
     if error.code!=404:raise
-    release=api(BASE+'/releases','POST',{'tag_name':'v1.8.0','target_commitish':sha,
-                'name':'Villager Trade Finder 1.8.0 — Minecraft 1.20–1.21.11 + 26.x',
-                'body':body,'draft':True,'prerelease':False})
+    release=api(BASE+'/releases','POST',{**release_fields,'draft':True,'prerelease':False})
 assert release['author']['login']=='CNTrident'
 if not release['draft']:raise RuntimeError('v1.8.0 is already published; refusing to replace a published release')
-release=api(BASE+'/releases/'+str(release['id']),'PATCH',{'body':body})
+release=api(BASE+'/releases/'+str(release['id']),'PATCH',release_fields)
 existing={a['name']:a for a in release['assets']}
 assets=[p for p in sorted((ROOT/'dist').iterdir()) if p.is_file()]
 assert len([p for p in assets if p.name.endswith('.jar') and not p.name.endswith('-sources.jar')])>=19
@@ -70,7 +71,7 @@ def upload_asset(path):
 
 with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
     uploaded=list(pool.map(upload_asset,assets))
-release=api(BASE+'/releases/'+str(release['id']),'PATCH',{'draft':False,'prerelease':False,'make_latest':'true'})
+release=api(BASE+'/releases/'+str(release['id']),'PATCH',{**release_fields,'draft':False,'prerelease':False,'make_latest':'true'})
 published=api(BASE+'/releases/tags/v1.8.0')
 assert not published['draft'] and published['author']['login']=='CNTrident'
 assert len(published['assets'])==len(assets)
