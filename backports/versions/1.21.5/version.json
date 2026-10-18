@@ -1,0 +1,28 @@
+{
+  "minecraft": "1.21.5",
+  "mod_version": "1.8.0",
+  "java": 21,
+  "fabric_api": "0.128.2+1.21.5",
+  "jar": "villager_trade_finder-fabric-1.21.5-1.8.0.jar",
+  "sha256": "2c6fd7aee97becfe35ef3f33af5b0e91e901df2907df4957a42deb7b592fab08",
+  "bytes": 104900,
+  "sources": "villager_trade_finder-fabric-1.21.5-1.8.0-sources.jar",
+  "source_directory": "backports/versions/1.21.5",
+  "trade_cycling": {
+    "version": "fabric-1.21.5-1.0.20",
+    "game_versions": [
+      "1.21.5"
+    ],
+    "page": "https://modrinth.com/mod/trade-cycling/version/tZFQXmUX",
+    "download": "https://cdn.modrinth.com/data/qpPoAL6m/versions/tZFQXmUX/trade-cycling-fabric-1.21.5-1.0.20.jar"
+  },
+  "visible_traders": {
+    "version": "0.0.9",
+    "game_versions": [
+      "1.21.5"
+    ],
+    "page": "https://modrinth.com/mod/visible-traders/version/IWSGXIKe",
+    "download": "https://cdn.modrinth.com/data/AhllI99f/versions/IWSGXIKe/VisibleTraders-0.0.9%2B1.21.5.jar"
+  },
+  "checks": "compile, remap, headless matching/configuration regression checks; no in-game testing"
+}

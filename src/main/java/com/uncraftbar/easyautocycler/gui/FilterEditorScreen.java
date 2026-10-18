@@ -31,6 +31,7 @@ public class FilterEditorScreen extends Screen {
     private final boolean enchantedItemTargetsSupported;
     @Nullable private final EnchantmentNameResolver enchantmentNameResolver;
     @Nullable private final ItemNameResolver itemNameResolver;
+    @Nullable private final PotionNameResolver potionNameResolver;
     private final List<String> targetSuggestions;
     private final List<String> enchantmentSuggestions;
 
@@ -40,6 +41,7 @@ public class FilterEditorScreen extends Screen {
     private EditBox maxPriceInput;
     private SuggestingEditBox itemEnchantmentInput;
     private EditBox itemEnchantmentLevelInput;
+    private SuggestingEditBox potionInput;
     private Component statusText = Component.empty();
     private String initialEnchantmentId;
     private String initialEnchantmentLevel;
@@ -47,6 +49,7 @@ public class FilterEditorScreen extends Screen {
     private String initialMaxPrice;
     private String initialItemEnchantment;
     private String initialItemEnchantmentLevel;
+    private String initialPotion;
     private boolean normalizingInputs;
 
     private static final int INPUT_HEIGHT = 20;
@@ -60,6 +63,7 @@ public class FilterEditorScreen extends Screen {
                                boolean enchantedItemTargetsSupported,
                                @Nullable EnchantmentNameResolver enchantmentNameResolver,
                                @Nullable ItemNameResolver itemNameResolver,
+                               @Nullable PotionNameResolver potionNameResolver,
                                List<String> targetSuggestions,
                                List<String> enchantmentSuggestions,
                                Consumer<Integer> onSave) {
@@ -73,6 +77,7 @@ public class FilterEditorScreen extends Screen {
         this.enchantedItemTargetsSupported = enchantedItemTargetsSupported;
         this.enchantmentNameResolver = enchantmentNameResolver;
         this.itemNameResolver = itemNameResolver;
+        this.potionNameResolver = potionNameResolver;
         this.targetSuggestions = targetSuggestions;
         this.enchantmentSuggestions = enchantmentSuggestions;
     }
@@ -165,7 +170,23 @@ public class FilterEditorScreen extends Screen {
             this.addRenderableWidget(itemEnchantmentLevelInput);
         }
 
-        enchantmentIdInput.setChangeListener(value -> normalizeInputs());
+        if (!librarianMode && potionNameResolver != null) {
+            potionInput = new SuggestingEditBox(this.font, left, firstY + 78,
+                    contentWidth, INPUT_HEIGHT, Component.translatable("gui.easyautocycler.filter.potion"),
+                    potionNameResolver.suggestions());
+            potionInput.setMaxLength(256);
+            potionInput.setHint(Component.translatable("gui.easyautocycler.filter.hint.potion"));
+            if (filter.getPotionId() != null) {
+                potionInput.setValue(potionNameResolver.preferredInput(filter.getPotionId()));
+            }
+            this.addRenderableWidget(potionInput);
+        }
+        updateVariantInputs();
+
+        enchantmentIdInput.setChangeListener(value -> {
+            normalizeInputs();
+            updateVariantInputs();
+        });
         enchantmentLevelInput.setResponder(value -> normalizeInputs());
         minPriceInput.setResponder(value -> normalizeInputs());
         maxPriceInput.setResponder(value -> normalizeInputs());
@@ -178,6 +199,7 @@ public class FilterEditorScreen extends Screen {
         initialMaxPrice = maxPriceInput.getValue();
         initialItemEnchantment = valueOf(itemEnchantmentInput);
         initialItemEnchantmentLevel = valueOf(itemEnchantmentLevelInput);
+        initialPotion = valueOf(potionInput);
 
         int bottomY = Math.min(this.height - BUTTON_HEIGHT - 8, top + editorHeight - 28);
         int buttonWidth = (contentWidth - gap) / 2;
@@ -225,6 +247,16 @@ public class FilterEditorScreen extends Screen {
         List<FilterEntry.EnchantmentTarget> itemEnchantments = parseItemEnchantments(id);
         if (itemEnchantments == null) return;
 
+        Identifier potionId = null;
+        if (isPotionTarget() && potionInput != null && !potionInput.getValue().isBlank()) {
+            potionId = potionNameResolver.resolve(potionInput.getValue());
+            if (potionId == null) {
+                setError(Component.translatable("gui.easyautocycler.filter.error.invalid_potion",
+                        potionInput.getValue()));
+                return;
+            }
+        }
+
         if (librarianMode) {
             filter.setEnchantmentId(id);
             filter.setEnchantmentLevel(level);
@@ -239,6 +271,7 @@ public class FilterEditorScreen extends Screen {
             filter.setItemEnchantments(itemEnchantments);
         }
         filter.setMinPrice(minPrice);
+        filter.setPotionId(potionId);
         filter.setMaxPrice(maxPrice);
         filter.setPaymentItemId(null);
         onSave.accept(0);
@@ -247,7 +280,7 @@ public class FilterEditorScreen extends Screen {
 
     @Nullable
     private List<FilterEntry.EnchantmentTarget> parseItemEnchantments(Identifier itemId) {
-        if (librarianMode || !enchantedItemTargetsSupported || itemEnchantmentInput == null
+        if (isPotionTarget() || librarianMode || !enchantedItemTargetsSupported || itemEnchantmentInput == null
                 || itemEnchantmentInput.getValue().isBlank()) return List.of();
         if (enchantmentNameResolver == null || itemNameResolver == null) return null;
 
@@ -293,6 +326,31 @@ public class FilterEditorScreen extends Screen {
 
     private static String[] splitValues(String value) {
         return value.trim().split("\\s*[,，]\\s*", -1);
+    }
+
+    private boolean isPotionTarget() {
+        return !librarianMode && potionNameResolver != null && itemNameResolver != null
+                && Identifier.withDefaultNamespace("tipped_arrow")
+                .equals(itemNameResolver.resolve(enchantmentIdInput.getValue()));
+    }
+
+    private void updateVariantInputs() {
+        boolean potionTarget = isPotionTarget();
+        if (potionInput != null) {
+            potionInput.visible = potionTarget;
+            potionInput.active = potionTarget;
+            if (!potionTarget && potionInput.isFocused()) potionInput.setFocused(false);
+        }
+        if (itemEnchantmentInput != null) {
+            itemEnchantmentInput.visible = !potionTarget;
+            itemEnchantmentInput.active = !potionTarget;
+            itemEnchantmentLevelInput.visible = !potionTarget;
+            itemEnchantmentLevelInput.active = !potionTarget;
+            if (potionTarget) {
+                itemEnchantmentInput.setFocused(false);
+                itemEnchantmentLevelInput.setFocused(false);
+            }
+        }
     }
 
     private void normalizeInputs() {
@@ -402,7 +460,8 @@ public class FilterEditorScreen extends Screen {
                 ? this.title.copy().append(Component.literal(" *").withStyle(ChatFormatting.GOLD)) : this.title;
         graphics.text(this.font, title, left, top + 9, 0xFFF4F6F8, false);
         Component subtitle = statusText.getString().isEmpty()
-                ? Component.translatable(librarianMode
+                ? Component.translatable(isPotionTarget()
+                ? "gui.easyautocycler.filter.subtitle.potion" : librarianMode
                 ? "gui.easyautocycler.filter.subtitle"
                 : enchantedItemTargetsSupported
                 ? "gui.easyautocycler.filter.subtitle.other.enchantable"
@@ -417,14 +476,18 @@ public class FilterEditorScreen extends Screen {
                 : "gui.easyautocycler.filter.min_count");
         drawLabel(graphics, minPriceInput, "gui.easyautocycler.filter.min_price");
         drawLabel(graphics, maxPriceInput, "gui.easyautocycler.filter.max_price");
-        if (itemEnchantmentInput != null && itemEnchantmentLevelInput != null) {
+        if (potionInput != null && potionInput.visible) {
+            drawLabel(graphics, potionInput, "gui.easyautocycler.filter.potion");
+        } else if (itemEnchantmentInput != null && itemEnchantmentLevelInput != null) {
             drawLabel(graphics, itemEnchantmentInput,
                     "gui.easyautocycler.filter.optional_item_enchantment");
             drawLabel(graphics, itemEnchantmentLevelInput,
                     "gui.easyautocycler.filter.optional_enchantment_level");
         }
         enchantmentIdInput.extractSuggestionList(graphics, mouseX, mouseY);
-        if (itemEnchantmentInput != null) {
+        if (potionInput != null && potionInput.visible) {
+            potionInput.extractSuggestionList(graphics, mouseX, mouseY);
+        } else if (itemEnchantmentInput != null) {
             itemEnchantmentInput.extractSuggestionList(graphics, mouseX, mouseY);
         }
     }
@@ -435,7 +498,8 @@ public class FilterEditorScreen extends Screen {
                 || !initialMinPrice.equals(minPriceInput.getValue())
                 || !initialMaxPrice.equals(maxPriceInput.getValue())
                 || !initialItemEnchantment.equals(valueOf(itemEnchantmentInput))
-                || !initialItemEnchantmentLevel.equals(valueOf(itemEnchantmentLevelInput)));
+                || !initialItemEnchantmentLevel.equals(valueOf(itemEnchantmentLevelInput))
+                || !initialPotion.equals(valueOf(potionInput)));
     }
 
     private static String valueOf(@Nullable EditBox input) {
@@ -449,7 +513,9 @@ public class FilterEditorScreen extends Screen {
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         if (enchantmentIdInput != null && enchantmentIdInput.clickSuggestion(event)) return true;
-        if (itemEnchantmentInput != null && itemEnchantmentInput.clickSuggestion(event)) return true;
+        if (potionInput != null && potionInput.visible && potionInput.clickSuggestion(event)) return true;
+        if (itemEnchantmentInput != null && itemEnchantmentInput.visible
+                && itemEnchantmentInput.clickSuggestion(event)) return true;
         boolean maximumPriceWasFocused = maxPriceInput != null && maxPriceInput.isFocused();
         boolean handled = super.mouseClicked(event, doubleClick);
         if (maximumPriceWasFocused && !maxPriceInput.isFocused()) normalizePriceRange();

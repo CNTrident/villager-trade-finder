@@ -1,0 +1,11 @@
+build/
+generated/
+.gradle/
+.workspaces/
+metadata/
+dist/
+logs/
+build-*.log
+build-report.json
+__pycache__/
+*.pyc

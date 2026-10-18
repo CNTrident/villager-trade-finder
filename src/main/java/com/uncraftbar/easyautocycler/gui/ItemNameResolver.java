@@ -69,6 +69,9 @@ public final class ItemNameResolver {
             registerAlias(englishName, id);
             registerAlias(chineseName, id);
             registerAlias(localizedName, id);
+            if (id.equals(Identifier.withDefaultNamespace("tipped_arrow"))) {
+                registerAlias("药水箭", id);
+            }
 
             preferredNames.put(id, localizedName.isEmpty() ? englishName : localizedName);
             displayNames.put(id, bilingualName(chineseName, englishName, fallback));

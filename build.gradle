@@ -65,6 +65,22 @@ tasks.withType(JavaCompile).configureEach {
     options.release = 25
 }
 
+tasks.register('verifyPotionArrows', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.uncraftbar.easyautocycler.PotionArrowChecks'
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
+    workingDir = layout.buildDirectory.dir('potion-arrow-checks').get().asFile
+    doFirst { workingDir.mkdirs() }
+}
+
+// This headless harness is executed by JavaExec, not a JUnit test engine.
+test {
+    exclude '**/PotionArrowChecks*.class'
+}
+
+check.dependsOn verifyPotionArrows
+
 jar {
     from('LICENSE') {
         rename { "${it}_${base.archivesName.get()}" }

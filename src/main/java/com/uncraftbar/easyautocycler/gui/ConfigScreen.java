@@ -37,6 +37,7 @@ public class ConfigScreen extends Screen {
     private List<String> enchantmentSuggestions = List.of();
     private EnchantmentNameResolver enchantmentNameResolver;
     private ItemNameResolver itemNameResolver;
+    private PotionNameResolver potionNameResolver;
     private List<String> itemSuggestions = List.of();
 
     private List<FilterEntry> filters = new ArrayList<>();
@@ -104,6 +105,10 @@ public class ConfigScreen extends Screen {
                 this.itemNameResolver = new ItemNameResolver(this.minecraft.level.registryAccess(),
                         professionId, this.minecraft.getResourceManager());
                 this.itemSuggestions = this.itemNameResolver.suggestions();
+                if (professionId.equals(Identifier.withDefaultNamespace("fletcher"))) {
+                    this.potionNameResolver = new PotionNameResolver(this.minecraft.level.registryAccess(),
+                            this.minecraft.getResourceManager());
+                }
             }
         } catch (Exception e) {
             EasyAutoCyclerMod.LOGGER.error("Failed to load registry for suggestions", e);
@@ -264,6 +269,7 @@ public class ConfigScreen extends Screen {
         return left.getMode() == right.getMode()
                 && left.getTradeScope() == right.getTradeScope()
                 && Objects.equals(left.getItemId(), right.getItemId())
+                && Objects.equals(left.getPotionId(), right.getPotionId())
                 && left.getMinCount() == right.getMinCount()
                 && Objects.equals(left.getEnchantmentId(), right.getEnchantmentId())
                 && left.getEnchantmentLevel() == right.getEnchantmentLevel()
@@ -282,7 +288,7 @@ public class ConfigScreen extends Screen {
         if (filterToEdit == null) {
             FilterEntry newFilter = new FilterEntry();
             FilterEditorScreen editorScreen = new FilterEditorScreen(this, newFilter,
-                    librarianMode, enchantedItemTargetsSupported, enchantmentNameResolver, itemNameResolver,
+                    librarianMode, enchantedItemTargetsSupported, enchantmentNameResolver, itemNameResolver, potionNameResolver,
                     librarianMode ? enchantmentSuggestions : itemSuggestions, enchantmentSuggestions, index -> {
                 filters.add(newFilter);
                 refreshFiltersList();
@@ -293,7 +299,7 @@ public class ConfigScreen extends Screen {
             if (filterIndex >= 0) {
                 FilterEntry filterCopy = new FilterEntry(filterToEdit);
                 FilterEditorScreen editorScreen = new FilterEditorScreen(this, filterCopy,
-                        librarianMode, enchantedItemTargetsSupported, enchantmentNameResolver, itemNameResolver,
+                        librarianMode, enchantedItemTargetsSupported, enchantmentNameResolver, itemNameResolver, potionNameResolver,
                         librarianMode ? enchantmentSuggestions : itemSuggestions, enchantmentSuggestions, index -> {
                     filters.set(filterIndex, filterCopy);
                     refreshFiltersList();
@@ -328,7 +334,9 @@ public class ConfigScreen extends Screen {
         List<String> itemEnchantmentNames = enchantmentNameResolver == null ? List.of()
                 : filter.getItemEnchantments().stream()
                 .map(target -> enchantmentNameResolver.displayName(target.id())).toList();
-        return filter.getDisplayName(null, itemName, itemEnchantmentNames);
+        String potionName = filter.getPotionId() == null || potionNameResolver == null
+                ? null : potionNameResolver.displayName(filter.getPotionId());
+        return filter.getDisplayName(null, itemName, itemEnchantmentNames, potionName);
     }
 
     private static class FilterListWidget extends ContainerObjectSelectionList<FilterListWidget.FilterEntryRow> {

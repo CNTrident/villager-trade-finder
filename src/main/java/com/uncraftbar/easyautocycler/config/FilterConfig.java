@@ -41,6 +41,7 @@ public class FilterConfig {
         // Retained for backward compatibility with configurations from 1.2.1 and older.
         public boolean enabled = true;
         public String itemId;
+        public String potionId;
         public int minCount = 1;
         public String enchantmentId;
         public int enchantmentLevel = 1;
@@ -96,6 +97,7 @@ public class FilterConfig {
             data.tradeScope = filter.getTradeScope().name();
             data.enabled = filter.isEnabled();
             data.itemId = filter.getItemId() != null ? filter.getItemId().toString() : null;
+            data.potionId = filter.getPotionId() != null ? filter.getPotionId().toString() : null;
             data.minCount = filter.getMinCount();
             data.enchantmentId = filter.getEnchantmentId() != null ? filter.getEnchantmentId().toString() : null;
             data.enchantmentLevel = filter.getEnchantmentLevel();
@@ -183,6 +185,17 @@ public class FilterConfig {
                 }
             }
             
+            if (data.potionId != null && !data.potionId.isBlank()
+                    && Identifier.withDefaultNamespace("tipped_arrow").equals(filter.getItemId())) {
+                Identifier potionId = Identifier.tryParse(data.potionId);
+                if (potionId == null) {
+                    // Do not broaden an invalid specific-potion target into any arrow.
+                    EasyAutoCyclerMod.LOGGER.warn("Skipping invalid potion target: {}", data.potionId);
+                    continue;
+                }
+                filter.setPotionId(potionId);
+            }
+
             if (data.enchantmentId != null && !data.enchantmentId.isEmpty()) {
                 try {
                     filter.setEnchantmentId(Identifier.parse(data.enchantmentId));

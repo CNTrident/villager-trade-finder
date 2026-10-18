@@ -1,6 +1,10 @@
 package com.uncraftbar.easyautocycler.filter;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
@@ -32,6 +36,7 @@ public class FilterEntry {
     
     // Item-related criteria
     private Identifier itemId;
+    private Identifier potionId;
     private int minCount = 1;
     
     // Enchantment-related criteria
@@ -55,6 +60,7 @@ public class FilterEntry {
         this.mode = other.mode;
         this.tradeScope = other.tradeScope;
         this.itemId = other.itemId;
+        this.potionId = other.potionId;
         this.minCount = other.minCount;
         this.enchantmentId = other.enchantmentId;
         this.enchantmentLevel = other.enchantmentLevel;
@@ -99,6 +105,24 @@ public class FilterEntry {
 
     public void setItemId(Identifier itemId) {
         this.itemId = itemId;
+        if (!Identifier.withDefaultNamespace("tipped_arrow").equals(itemId)) this.potionId = null;
+    }
+
+    public Identifier getPotionId() {
+        return potionId;
+    }
+
+    public void setPotionId(Identifier potionId) {
+        this.potionId = potionId;
+    }
+
+    /** A null potion target retains the legacy match-any-potion behavior. */
+    public boolean matchesPotion(ItemStack stack) {
+        if (potionId == null) return true;
+        if (!stack.is(Items.TIPPED_ARROW)) return false;
+        PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
+        return contents != null && contents.potion().flatMap(holder -> holder.unwrapKey())
+                .map(key -> key.identifier().equals(potionId)).orElse(false);
     }
 
     public int getMinCount() {
@@ -182,12 +206,22 @@ public class FilterEntry {
 
     public Component getDisplayName(String enchantmentDisplayName, String itemDisplayName,
                                     List<String> itemEnchantmentDisplayNames) {
+        return getDisplayName(enchantmentDisplayName, itemDisplayName, itemEnchantmentDisplayNames, null);
+    }
+
+    public Component getDisplayName(String enchantmentDisplayName, String itemDisplayName,
+                                    List<String> itemEnchantmentDisplayNames, String potionDisplayName) {
         MutableComponent component = Component.empty();
 
         if (itemId != null) {
             String itemName = itemDisplayName == null || itemDisplayName.isBlank()
                     ? itemId.getPath() : itemDisplayName;
             component.append(Component.literal(itemName).withStyle(ChatFormatting.GOLD));
+            if (potionId != null) {
+                component.append(Component.literal("  •  " + (potionDisplayName == null
+                        ? potionId.getPath() : potionDisplayName))
+                        .withStyle(ChatFormatting.AQUA));
+            }
             for (int index = 0; index < itemEnchantments.size(); index++) {
                 EnchantmentTarget target = itemEnchantments.get(index);
                 String enchantmentName = index < itemEnchantmentDisplayNames.size()

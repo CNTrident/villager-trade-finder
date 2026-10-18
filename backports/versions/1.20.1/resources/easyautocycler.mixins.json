@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "com.uncraftbar.easyautocycler.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "MinecraftTickMixin",
+    "ClientPacketListenerMixin",
+    "MerchantMenuAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "refmap": "easyautocycler.refmap.json"
+}

@@ -1,0 +1,939 @@
+[
+  {
+    "minecraft": "1.20",
+    "fabric_api": "0.83.0+1.20",
+    "java": 17,
+    "trade_cycling": null,
+    "visible_traders": {
+      "id": "9CopIc96",
+      "version_number": "0.0.4",
+      "game_versions": [
+        "1.20",
+        "1.20.1",
+        "1.20.2",
+        "1.20.3",
+        "1.20.4"
+      ],
+      "project_id": "AhllI99f",
+      "files": [
+        {
+          "id": "fwr1zJYB",
+          "hashes": {
+            "sha512": "07f42595a3df0062ac074adbda987f35d5a95105edd9852407a3c8d0db5e313a1f810f6029dca9b8762aae6aadd5048663c290a402b444d4b98bf3a16b9047b6",
+            "sha1": "a8bd5046885ad583f8d7cae4c20b2e1d19a35f3f"
+          },
+          "url": "https://cdn.modrinth.com/data/AhllI99f/versions/9CopIc96/VisibleTraders-0.0.4.jar",
+          "filename": "VisibleTraders-0.0.4.jar",
+          "primary": true,
+          "size": 36065,
+          "file_type": null
+        }
+      ]
+    },
+    "manifest_url": "https://piston-meta.mojang.com/v1/packages/9e7847f933f4e81e45dd1dfb24bab7d4324ca023/1.20.json"
+  },
+  {
+    "minecraft": "1.20.1",
+    "fabric_api": "0.92.12+1.20.1",
+    "java": 17,
+    "trade_cycling": {
+      "id": "oKfFaQGY",
+      "version_number": "fabric-1.20.1-1.0.18",
+      "game_versions": [
+        "1.20.1"
+      ],
+      "project_id": "qpPoAL6m",
+      "files": [
+        {
+          "id": "6SQDWv4c",
+          "hashes": {
+            "sha512": "e2b7949a66c6c1adecea8ce5eace8e96758c5d1c20350ff47d9a55f8e69b678debdc778414ee20f0b2444008c26666d4edc15bcc90934fced3191fa9c9db927c",
+            "sha1": "56b57b11a00817070073ba53c0a8f92ede4daf0d"
+          },
+          "url": "https://cdn.modrinth.com/data/qpPoAL6m/versions/oKfFaQGY/trade-cycling-fabric-1.20.1-1.0.18.jar",
+          "filename": "trade-cycling-fabric-1.20.1-1.0.18.jar",
+          "primary": true,
+          "size": 430650,
+          "file_type": null
+        }
+      ]
+    },
+    "visible_traders": {
+      "id": "9CopIc96",
+      "version_number": "0.0.4",
+      "game_versions": [
+        "1.20",
+        "1.20.1",
+        "1.20.2",
+        "1.20.3",
+        "1.20.4"
+      ],
+      "project_id": "AhllI99f",
+      "files": [
+        {
+          "id": "fwr1zJYB",
+          "hashes": {
+            "sha512": "07f42595a3df0062ac074adbda987f35d5a95105edd9852407a3c8d0db5e313a1f810f6029dca9b8762aae6aadd5048663c290a402b444d4b98bf3a16b9047b6",
+            "sha1": "a8bd5046885ad583f8d7cae4c20b2e1d19a35f3f"
+          },
+          "url": "https://cdn.modrinth.com/data/AhllI99f/versions/9CopIc96/VisibleTraders-0.0.4.jar",
+          "filename": "VisibleTraders-0.0.4.jar",
+          "primary": true,
+          "size": 36065,
+          "file_type": null
+        }
+      ]
+    },
+    "manifest_url": "https://piston-meta.mojang.com/v1/packages/a5cf661d31d9dfcd3d1645be80f43954f63f63b0/1.20.1.json"
+  },
+  {
+    "minecraft": "1.20.2",
+    "fabric_api": "0.91.6+1.20.2",
+    "java": 17,
+    "trade_cycling": {
+      "id": "KQjLNqMe",
+      "version_number": "fabric-1.20.2-1.0.8",
+      "game_versions": [
+        "1.20.2"
+      ],
+      "project_id": "qpPoAL6m",
+      "files": [
+        {
+          "id": "dAw9HKMO",
+          "hashes": {
+            "sha1": "0b0409e84fba2b15330e0a59285e08a1e9e515ff",
+            "sha512": "4c6128a295d4bb617ecbf7704c0c48626df4c469d40112540bbcf1515f65708c8026ca26d468e4c410e9e37b4e4b845a04de92e5a634052b00f90ded34dd3e35"
+          },
+          "url": "https://cdn.modrinth.com/data/qpPoAL6m/versions/KQjLNqMe/trade-cycling-fabric-1.20.2-1.0.8.jar",
+          "filename": "trade-cycling-fabric-1.20.2-1.0.8.jar",
+          "primary": true,
+          "size": 495881,
+          "file_type": null
+        }
+      ]
+    },
+    "visible_traders": {
+      "id": "9CopIc96",
+      "version_number": "0.0.4",
+      "game_versions": [
+        "1.20",
+        "1.20.1",
+        "1.20.2",
+        "1.20.3",
+        "1.20.4"
+      ],
+      "project_id": "AhllI99f",
+      "files": [
+        {
+          "id": "fwr1zJYB",
+          "hashes": {
+            "sha512": "07f42595a3df0062ac074adbda987f35d5a95105edd9852407a3c8d0db5e313a1f810f6029dca9b8762aae6aadd5048663c290a402b444d4b98bf3a16b9047b6",
+            "sha1": "a8bd5046885ad583f8d7cae4c20b2e1d19a35f3f"
+          },
+          "url": "https://cdn.modrinth.com/data/AhllI99f/versions/9CopIc96/VisibleTraders-0.0.4.jar",
+          "filename": "VisibleTraders-0.0.4.jar",
+          "primary": true,
+          "size": 36065,
+          "file_type": null
+        }
+      ]
+    },
+    "manifest_url": "https://piston-meta.mojang.com/v1/packages/cf1d87e6969d34f7b553939bb1c72177c5fffe86/1.20.2.json"
+  },
+  {
+    "minecraft": "1.20.3",
+    "fabric_api": "0.91.1+1.20.3",
+    "java": 17,
+    "trade_cycling": null,
+    "visible_traders": {
+      "id": "9CopIc96",
+      "version_number": "0.0.4",
+      "game_versions": [
+        "1.20",
+        "1.20.1",
+        "1.20.2",
+        "1.20.3",
+        "1.20.4"
+      ],
+      "project_id": "AhllI99f",
+      "files": [
+        {
+          "id": "fwr1zJYB",
+          "hashes": {
+            "sha512": "07f42595a3df0062ac074adbda987f35d5a95105edd9852407a3c8d0db5e313a1f810f6029dca9b8762aae6aadd5048663c290a402b444d4b98bf3a16b9047b6",
+            "sha1": "a8bd5046885ad583f8d7cae4c20b2e1d19a35f3f"
+          },
+          "url": "https://cdn.modrinth.com/data/AhllI99f/versions/9CopIc96/VisibleTraders-0.0.4.jar",
+          "filename": "VisibleTraders-0.0.4.jar",
+          "primary": true,
+          "size": 36065,
+          "file_type": null
+        }
+      ]
+    },
+    "manifest_url": "https://piston-meta.mojang.com/v1/packages/86c3a686b59ee1bcd70febee4de962ec3e1a5d87/1.20.3.json"
+  },
+  {
+    "minecraft": "1.20.4",
+    "fabric_api": "0.97.3+1.20.4",
+    "java": 17,
+    "trade_cycling": {
+      "id": "LIpX6qiq",
+      "version_number": "fabric-1.20.4-1.0.11",
+      "game_versions": [
+        "1.20.4"
+      ],
+      "project_id": "qpPoAL6m",
+      "files": [
+        {
+          "id": "WId69JKF",
+          "hashes": {
+            "sha512": "4a45351fb71ffe57e9239965ad4c9b72fb8a91782d540b04ffda32e65a4352f309404ad86ab0034b37b28065737d3c019e1f1646e1b1a2a6e8b6c7233dfc4fc3",
+            "sha1": "13bf1ea7397cd76f6103e46159f17e6480d9145d"
+          },
+          "url": "https://cdn.modrinth.com/data/qpPoAL6m/versions/LIpX6qiq/trade-cycling-fabric-1.20.4-1.0.11.jar",
+          "filename": "trade-cycling-fabric-1.20.4-1.0.11.jar",
+          "primary": true,
+          "size": 497542,
+          "file_type": null
+        }
+      ]
+    },
+    "visible_traders": {
+      "id": "9CopIc96",
+      "version_number": "0.0.4",
+      "game_versions": [
+        "1.20",
+        "1.20.1",
+        "1.20.2",
+        "1.20.3",
+        "1.20.4"
+      ],
+      "project_id": "AhllI99f",
+      "files": [
+        {
+          "id": "fwr1zJYB",
+          "hashes": {
+            "sha512": "07f42595a3df0062ac074adbda987f35d5a95105edd9852407a3c8d0db5e313a1f810f6029dca9b8762aae6aadd5048663c290a402b444d4b98bf3a16b9047b6",
+            "sha1": "a8bd5046885ad583f8d7cae4c20b2e1d19a35f3f"
+          },
+          "url": "https://cdn.modrinth.com/data/AhllI99f/versions/9CopIc96/VisibleTraders-0.0.4.jar",
+          "filename": "VisibleTraders-0.0.4.jar",
+          "primary": true,
+          "size": 36065,
+          "file_type": null
+        }
+      ]
+    },
+    "manifest_url": "https://piston-meta.mojang.com/v1/packages/2c592ccd71ca2d5dadebeb6543ad6b18e6f43305/1.20.4.json"
+  },
+  {
+    "minecraft": "1.20.5",
+    "fabric_api": "0.97.8+1.20.5",
+    "java": 21,
+    "trade_cycling": {
+      "id": "TEg4Zwjn",
+      "version_number": "fabric-1.20.5-1.0.11",
+      "game_versions": [
+        "1.20.5"
+      ],
+      "project_id": "qpPoAL6m",
+      "files": [
+        {
+          "id": "QcFQvt43",
+          "hashes": {
+            "sha1": "fd6653f805bbafd699c6341adfd5b643740b9f5e",
+            "sha512": "281e5c38bca5711eecadf9491a3a464f872696467d6507d6e3cfb7ef0c403c5509555e753c6547ba3571d1f2c5109e3cc818647d9a32f1d0f79622244c8437de"
+          },
+          "url": "https://cdn.modrinth.com/data/qpPoAL6m/versions/TEg4Zwjn/trade-cycling-fabric-1.20.5-1.0.11.jar",
+          "filename": "trade-cycling-fabric-1.20.5-1.0.11.jar",
+          "primary": true,
+          "size": 505948,
+          "file_type": null
+        }
+      ]
+    },
+    "visible_traders": {
+      "id": "zZngOHxX",
+      "version_number": "0.0.7.1",
+      "game_versions": [
+        "1.20.5",
+        "1.20.6",
+        "1.21",
+        "1.21.1",
+        "1.21.2",
+        "1.21.3",
+        "1.21.4"
+      ],
+      "project_id": "AhllI99f",
+      "files": [
+        {
+          "id": "xGRdgkZm",
+          "hashes": {
+            "sha1": "26f487337cbaf7d8692236cad5e8781e1a6a33c1",
+            "sha512": "03da90443acd46a22084c6e85ef57d4c80e7ed75350607bde612dd21560cd94f79ce8cd0113d81efc59e6314e3250f8d2ac32637de2457670fc5aa9ac10d3e1d"
+          },
+          "url": "https://cdn.modrinth.com/data/AhllI99f/versions/zZngOHxX/VisibleTraders-0.0.7.1.jar",
+          "filename": "VisibleTraders-0.0.7.1.jar",
+          "primary": true,
+          "size": 39869,
+          "file_type": null
+        }
+      ]
+    },
+    "manifest_url": "https://piston-meta.mojang.com/v1/packages/01f5f81adb74fc36f378c49cf0d6b70a60b139bb/1.20.5.json"
+  },
+  {
+    "minecraft": "1.20.6",
+    "fabric_api": "0.100.8+1.20.6",
+    "java": 21,
+    "trade_cycling": {
+      "id": "pCRH0GhH",
+      "version_number": "fabric-1.20.6-1.0.11",
+      "game_versions": [
+        "1.20.6"
+      ],
+      "project_id": "qpPoAL6m",
+      "files": [
+        {
+          "id": "hJ10RNuL",
+          "hashes": {
+            "sha512": "e562132d79b3c902a341a4401cef093b9f79280ea3acd602c699f3b865d50e6b7ffe1d140d7698ee864146f274a9179aeb0dc844049ddf62da3535f0d69902fe",
+            "sha1": "f0466228d75dd47f56c255d63ec53bd03ea1a960"
+          },
+          "url": "https://cdn.modrinth.com/data/qpPoAL6m/versions/pCRH0GhH/trade-cycling-fabric-1.20.6-1.0.11.jar",
+          "filename": "trade-cycling-fabric-1.20.6-1.0.11.jar",
+          "primary": true,
+          "size": 506321,
+          "file_type": null
+        }
+      ]
+    },
+    "visible_traders": {
+      "id": "zZngOHxX",
+      "version_number": "0.0.7.1",
+      "game_versions": [
+        "1.20.5",
+        "1.20.6",
+        "1.21",
+        "1.21.1",
+        "1.21.2",
+        "1.21.3",
+        "1.21.4"
+      ],
+      "project_id": "AhllI99f",
+      "files": [
+        {
+          "id": "xGRdgkZm",
+          "hashes": {
+            "sha1": "26f487337cbaf7d8692236cad5e8781e1a6a33c1",
+            "sha512": "03da90443acd46a22084c6e85ef57d4c80e7ed75350607bde612dd21560cd94f79ce8cd0113d81efc59e6314e3250f8d2ac32637de2457670fc5aa9ac10d3e1d"
+          },
+          "url": "https://cdn.modrinth.com/data/AhllI99f/versions/zZngOHxX/VisibleTraders-0.0.7.1.jar",
+          "filename": "VisibleTraders-0.0.7.1.jar",
+          "primary": true,
+          "size": 39869,
+          "file_type": null
+        }
+      ]
+    },
+    "manifest_url": "https://piston-meta.mojang.com/v1/packages/876ef010b51e9e646712d8322e383a84859d3b39/1.20.6.json"
+  },
+  {
+    "minecraft": "1.21",
+    "fabric_api": "0.102.0+1.21",
+    "java": 21,
+    "trade_cycling": {
+      "id": "MLsKtoqa",
+      "version_number": "fabric-1.21.1-1.0.23",
+      "game_versions": [
+        "1.21",
+        "1.21.1"
+      ],
+      "project_id": "qpPoAL6m",
+      "files": [
+        {
+          "id": "qDLOKeAi",
+          "hashes": {
+            "sha1": "1a3078e1dc8053d77873a8a93c00e059b74c0dc9",
+            "sha512": "d4e0259ed10d52f41ce45f80c3b25f9946ac575446cb3225ac8a9cdf52614c02758a8458e570aa752b919b70fbd984a06a90928dd82e3827168f2366c6419ef3"
+          },
+          "url": "https://cdn.modrinth.com/data/qpPoAL6m/versions/MLsKtoqa/trade-cycling-fabric-1.21.1-1.0.23.jar",
+          "filename": "trade-cycling-fabric-1.21.1-1.0.23.jar",
+          "primary": true,
+          "size": 521029,
+          "file_type": null
+        }
+      ]
+    },
+    "visible_traders": {
+      "id": "nEDGMR8b",
+      "version_number": "1.3.2",
+      "game_versions": [
+        "1.21",
+        "1.21.1"
+      ],
+      "project_id": "AhllI99f",
+      "files": [
+        {
+          "id": "RTFtrlJG",
+          "hashes": {
+            "sha512": "ccc7d7f28e5a5c42330ad1a7966f19c74b035d27bc2c27a767b8d5aab9c96d58cf033957706500e6be90c2e33c59226f0cda0d8ea04eda35a1f69fbd66033f58",
+            "sha1": "37bbdbfd70ba934f8c9b0755284805e19a2a41c3"
+          },
+          "url": "https://cdn.modrinth.com/data/AhllI99f/versions/nEDGMR8b/VisibleTraders-1.3.2.jar",
+          "filename": "VisibleTraders-1.3.2.jar",
+          "primary": true,
+          "size": 65742,
+          "file_type": null
+        }
+      ]
+    },
+    "manifest_url": "https://piston-meta.mojang.com/v1/packages/c47b4c513b2883240565102b076054e347eac738/1.21.json"
+  },
+  {
+    "minecraft": "1.21.1",
+    "fabric_api": "0.116.17+1.21.1",
+    "java": 21,
+    "trade_cycling": {
+      "id": "MLsKtoqa",
+      "version_number": "fabric-1.21.1-1.0.23",
+      "game_versions": [
+        "1.21",
+        "1.21.1"
+      ],
+      "project_id": "qpPoAL6m",
+      "files": [
+        {
+          "id": "qDLOKeAi",
+          "hashes": {
+            "sha1": "1a3078e1dc8053d77873a8a93c00e059b74c0dc9",
+            "sha512": "d4e0259ed10d52f41ce45f80c3b25f9946ac575446cb3225ac8a9cdf52614c02758a8458e570aa752b919b70fbd984a06a90928dd82e3827168f2366c6419ef3"
+          },
+          "url": "https://cdn.modrinth.com/data/qpPoAL6m/versions/MLsKtoqa/trade-cycling-fabric-1.21.1-1.0.23.jar",
+          "filename": "trade-cycling-fabric-1.21.1-1.0.23.jar",
+          "primary": true,
+          "size": 521029,
+          "file_type": null
+        }
+      ]
+    },
+    "visible_traders": {
+      "id": "nEDGMR8b",
+      "version_number": "1.3.2",
+      "game_versions": [
+        "1.21",
+        "1.21.1"
+      ],
+      "project_id": "AhllI99f",
+      "files": [
+        {
+          "id": "RTFtrlJG",
+          "hashes": {
+            "sha512": "ccc7d7f28e5a5c42330ad1a7966f19c74b035d27bc2c27a767b8d5aab9c96d58cf033957706500e6be90c2e33c59226f0cda0d8ea04eda35a1f69fbd66033f58",
+            "sha1": "37bbdbfd70ba934f8c9b0755284805e19a2a41c3"
+          },
+          "url": "https://cdn.modrinth.com/data/AhllI99f/versions/nEDGMR8b/VisibleTraders-1.3.2.jar",
+          "filename": "VisibleTraders-1.3.2.jar",
+          "primary": true,
+          "size": 65742,
+          "file_type": null
+        }
+      ]
+    },
+    "manifest_url": "https://piston-meta.mojang.com/v1/packages/499680d659b7a0ccb2fa9a809c345c5baf2ace7d/1.21.1.json"
+  },
+  {
+    "minecraft": "1.21.2",
+    "fabric_api": "0.106.1+1.21.2",
+    "java": 21,
+    "trade_cycling": null,
+    "visible_traders": {
+      "id": "Ynwu5EN7",
+      "version_number": "0.0.9",
+      "game_versions": [
+        "1.21.2",
+        "1.21.3",
+        "1.21.4"
+      ],
+      "project_id": "AhllI99f",
+      "files": [
+        {
+          "id": "r6voGU8U",
+          "hashes": {
+            "sha1": "e8d179fb3af59769573f324d156bf433f5c379e4",
+            "sha512": "e063de5df4bcbc4e9b0d9964e664811a4827d792875a73778a3baed6006f1bb1814908a2f283a81ff8aa9fee20de2f1b0a7724c940aad2bdba9edb85e26b7958"
+          },
+          "url": "https://cdn.modrinth.com/data/AhllI99f/versions/Ynwu5EN7/VisibleTraders-0.0.9%2B1.21-1.21.5.jar",
+          "filename": "VisibleTraders-0.0.9+1.21-1.21.5.jar",
+          "primary": true,
+          "size": 44897,
+          "file_type": null
+        }
+      ]
+    },
+    "manifest_url": "https://piston-meta.mojang.com/v1/packages/c14db17c663edf3d7a698488263a21b1df6d02af/1.21.2.json"
+  },
+  {
+    "minecraft": "1.21.3",
+    "fabric_api": "0.114.1+1.21.3",
+    "java": 21,
+    "trade_cycling": {
+      "id": "aYrM4NZY",
+      "version_number": "fabric-1.21.3-1.0.15",
+      "game_versions": [
+        "1.21.3"
+      ],
+      "project_id": "qpPoAL6m",
+      "files": [
+        {
+          "id": "GRovVFez",
+          "hashes": {
+            "sha1": "91dce679421275d3daa1f65aeee97ae23ad884cf",
+            "sha512": "5f718e6a7a0078eaee5cb46211064f324f9334242104700e92535bed077d8416d40d1ae678098a86aacd9a846797e2cda225e9d170170519d6dd7c9e7495000f"
+          },
+          "url": "https://cdn.modrinth.com/data/qpPoAL6m/versions/aYrM4NZY/trade-cycling-fabric-1.21.3-1.0.15.jar",
+          "filename": "trade-cycling-fabric-1.21.3-1.0.15.jar",
+          "primary": true,
+          "size": 522725,
+          "file_type": null
+        }
+      ]
+    },
+    "visible_traders": {
+      "id": "Ynwu5EN7",
+      "version_number": "0.0.9",
+      "game_versions": [
+        "1.21.2",
+        "1.21.3",
+        "1.21.4"
+      ],
+      "project_id": "AhllI99f",
+      "files": [
+        {
+          "id": "r6voGU8U",
+          "hashes": {
+            "sha1": "e8d179fb3af59769573f324d156bf433f5c379e4",
+            "sha512": "e063de5df4bcbc4e9b0d9964e664811a4827d792875a73778a3baed6006f1bb1814908a2f283a81ff8aa9fee20de2f1b0a7724c940aad2bdba9edb85e26b7958"
+          },
+          "url": "https://cdn.modrinth.com/data/AhllI99f/versions/Ynwu5EN7/VisibleTraders-0.0.9%2B1.21-1.21.5.jar",
+          "filename": "VisibleTraders-0.0.9+1.21-1.21.5.jar",
+          "primary": true,
+          "size": 44897,
+          "file_type": null
+        }
+      ]
+    },
+    "manifest_url": "https://piston-meta.mojang.com/v1/packages/05284f7158ec319013fa51f7ff44f8132dc9f428/1.21.3.json"
+  },
+  {
+    "minecraft": "1.21.4",
+    "fabric_api": "0.119.4+1.21.4",
+    "java": 21,
+    "trade_cycling": {
+      "id": "Qi9Krhbc",
+      "version_number": "fabric-1.21.4-1.0.20",
+      "game_versions": [
+        "1.21.4"
+      ],
+      "project_id": "qpPoAL6m",
+      "files": [
+        {
+          "id": "rCSdRxns",
+          "hashes": {
+            "sha1": "7febb4118a081ef959a68c79da04811ec9334c12",
+            "sha512": "91ed203653a87eb116c49f48d611219a6ebbd29665206b40f0906e43f5cdc503904049baaa87d0d2da551f22b8d68eb213908939fed96c54915b443fb4f557f1"
+          },
+          "url": "https://cdn.modrinth.com/data/qpPoAL6m/versions/Qi9Krhbc/trade-cycling-fabric-1.21.4-1.0.20.jar",
+          "filename": "trade-cycling-fabric-1.21.4-1.0.20.jar",
+          "primary": true,
+          "size": 527908,
+          "file_type": null
+        }
+      ]
+    },
+    "visible_traders": {
+      "id": "Ynwu5EN7",
+      "version_number": "0.0.9",
+      "game_versions": [
+        "1.21.2",
+        "1.21.3",
+        "1.21.4"
+      ],
+      "project_id": "AhllI99f",
+      "files": [
+        {
+          "id": "r6voGU8U",
+          "hashes": {
+            "sha1": "e8d179fb3af59769573f324d156bf433f5c379e4",
+            "sha512": "e063de5df4bcbc4e9b0d9964e664811a4827d792875a73778a3baed6006f1bb1814908a2f283a81ff8aa9fee20de2f1b0a7724c940aad2bdba9edb85e26b7958"
+          },
+          "url": "https://cdn.modrinth.com/data/AhllI99f/versions/Ynwu5EN7/VisibleTraders-0.0.9%2B1.21-1.21.5.jar",
+          "filename": "VisibleTraders-0.0.9+1.21-1.21.5.jar",
+          "primary": true,
+          "size": 44897,
+          "file_type": null
+        }
+      ]
+    },
+    "manifest_url": "https://piston-meta.mojang.com/v1/packages/a1cebdbaa1a44b7d8214a81be1d94316a8404d87/1.21.4.json"
+  },
+  {
+    "minecraft": "1.21.5",
+    "fabric_api": "0.128.2+1.21.5",
+    "java": 21,
+    "trade_cycling": {
+      "id": "tZFQXmUX",
+      "version_number": "fabric-1.21.5-1.0.20",
+      "game_versions": [
+        "1.21.5"
+      ],
+      "project_id": "qpPoAL6m",
+      "files": [
+        {
+          "id": "y1SZWvXM",
+          "hashes": {
+            "sha512": "85b2b1ac7ca2f0116028b087d288562652a5d13ac20a73e118303879ea51557d7ba63bf7d4ccce2f449c7346af08fb4c99f7c4cc31456dfd0e4fc1a2f783240a",
+            "sha1": "a2599baef97b21c6e6284c1f2a56ab36cdede0d9"
+          },
+          "url": "https://cdn.modrinth.com/data/qpPoAL6m/versions/tZFQXmUX/trade-cycling-fabric-1.21.5-1.0.20.jar",
+          "filename": "trade-cycling-fabric-1.21.5-1.0.20.jar",
+          "primary": true,
+          "size": 531234,
+          "file_type": null
+        }
+      ]
+    },
+    "visible_traders": {
+      "id": "IWSGXIKe",
+      "version_number": "0.0.9",
+      "game_versions": [
+        "1.21.5"
+      ],
+      "project_id": "AhllI99f",
+      "files": [
+        {
+          "id": "pXreuzzw",
+          "hashes": {
+            "sha512": "79c6a0bb5441df351c7499de0c07b859a01c5b1aded114d0ce1a72d311aff41f6e53ef4d338ceed2e672a11a4bbe0062a02632070843975247adbb7f59c94c37",
+            "sha1": "51ac3050b273f0d54d1d606cbeb1060d4c900ee8"
+          },
+          "url": "https://cdn.modrinth.com/data/AhllI99f/versions/IWSGXIKe/VisibleTraders-0.0.9%2B1.21.5.jar",
+          "filename": "VisibleTraders-0.0.9+1.21.5.jar",
+          "primary": true,
+          "size": 44905,
+          "file_type": null
+        }
+      ]
+    },
+    "manifest_url": "https://piston-meta.mojang.com/v1/packages/b341cd0e91419ab72b5d9dadad8d86a045d6b9a7/1.21.5.json"
+  },
+  {
+    "minecraft": "1.21.6",
+    "fabric_api": "0.128.2+1.21.6",
+    "java": 21,
+    "trade_cycling": {
+      "id": "vRzvpr9S",
+      "version_number": "fabric-1.21.6-1.0.19",
+      "game_versions": [
+        "1.21.6"
+      ],
+      "project_id": "qpPoAL6m",
+      "files": [
+        {
+          "id": "4AursdTr",
+          "hashes": {
+            "sha512": "85f5ac034c37554ab71d60df0a8f0b496d88b05a27b317ee827b184ff4a749608059f3b041c851c1b8551edeaedd7219535a49171f46fc975ebdc3897682b853",
+            "sha1": "95ad696e19d10bb51c5446a900b4cce46ee775ca"
+          },
+          "url": "https://cdn.modrinth.com/data/qpPoAL6m/versions/vRzvpr9S/trade-cycling-fabric-1.21.6-1.0.19.jar",
+          "filename": "trade-cycling-fabric-1.21.6-1.0.19.jar",
+          "primary": true,
+          "size": 534903,
+          "file_type": null
+        }
+      ]
+    },
+    "visible_traders": {
+      "id": "dekfaADl",
+      "version_number": "0.1.2",
+      "game_versions": [
+        "1.21.6",
+        "1.21.7",
+        "1.21.8"
+      ],
+      "project_id": "AhllI99f",
+      "files": [
+        {
+          "id": "xdjUg8f3",
+          "hashes": {
+            "sha1": "4c276348d7292e90aa5767cab2327a9d98d7ebfd",
+            "sha512": "08e60b4f4308cbf1b806c9670042708df108c3f7f2479e070195303b1f53b9b91273de5ab6c7ca6b0692e73126258e59497fc912e521992180eb689800c3f10e"
+          },
+          "url": "https://cdn.modrinth.com/data/AhllI99f/versions/dekfaADl/VisibleTraders-0.1.2.jar",
+          "filename": "VisibleTraders-0.1.2.jar",
+          "primary": true,
+          "size": 63520,
+          "file_type": null
+        }
+      ]
+    },
+    "manifest_url": "https://piston-meta.mojang.com/v1/packages/8dd125560431a618094435343acccd45191bb006/1.21.6.json"
+  },
+  {
+    "minecraft": "1.21.7",
+    "fabric_api": "0.129.0+1.21.7",
+    "java": 21,
+    "trade_cycling": {
+      "id": "dRyLEQiG",
+      "version_number": "fabric-1.21.7-1.0.19",
+      "game_versions": [
+        "1.21.7"
+      ],
+      "project_id": "qpPoAL6m",
+      "files": [
+        {
+          "id": "CH8e7z8c",
+          "hashes": {
+            "sha1": "03b88f5f6f1566313e14b05f3adb6a49334f042c",
+            "sha512": "f0ff43504336d9821cc289bc0257c06837418fd7b7925d9a711da20846696b2f5fa2ad5d2f29b4c5d9e7f3c7d75510ce50368e92c678e930f909c0fa00241d05"
+          },
+          "url": "https://cdn.modrinth.com/data/qpPoAL6m/versions/dRyLEQiG/trade-cycling-fabric-1.21.7-1.0.19.jar",
+          "filename": "trade-cycling-fabric-1.21.7-1.0.19.jar",
+          "primary": true,
+          "size": 535048,
+          "file_type": null
+        }
+      ]
+    },
+    "visible_traders": {
+      "id": "dekfaADl",
+      "version_number": "0.1.2",
+      "game_versions": [
+        "1.21.6",
+        "1.21.7",
+        "1.21.8"
+      ],
+      "project_id": "AhllI99f",
+      "files": [
+        {
+          "id": "xdjUg8f3",
+          "hashes": {
+            "sha1": "4c276348d7292e90aa5767cab2327a9d98d7ebfd",
+            "sha512": "08e60b4f4308cbf1b806c9670042708df108c3f7f2479e070195303b1f53b9b91273de5ab6c7ca6b0692e73126258e59497fc912e521992180eb689800c3f10e"
+          },
+          "url": "https://cdn.modrinth.com/data/AhllI99f/versions/dekfaADl/VisibleTraders-0.1.2.jar",
+          "filename": "VisibleTraders-0.1.2.jar",
+          "primary": true,
+          "size": 63520,
+          "file_type": null
+        }
+      ]
+    },
+    "manifest_url": "https://piston-meta.mojang.com/v1/packages/24c116056f9d403403d7b7c06fe018e75aaca464/1.21.7.json"
+  },
+  {
+    "minecraft": "1.21.8",
+    "fabric_api": "0.136.1+1.21.8",
+    "java": 21,
+    "trade_cycling": {
+      "id": "OEQWLuja",
+      "version_number": "fabric-1.21.8-1.0.20",
+      "game_versions": [
+        "1.21.8"
+      ],
+      "project_id": "qpPoAL6m",
+      "files": [
+        {
+          "id": "tgINDFhQ",
+          "hashes": {
+            "sha1": "0141b33e5ba8a8f443539bef9c3756794ab3fd53",
+            "sha512": "9809420c651d71d2dda4919c4716fe9b95aca1f1a69364a45b33aa8af4bb6018dd67c68857fedbfab68cd5cba0ab12afd0a9155034d74254435f9be35b455b0c"
+          },
+          "url": "https://cdn.modrinth.com/data/qpPoAL6m/versions/OEQWLuja/trade-cycling-fabric-1.21.8-1.0.20.jar",
+          "filename": "trade-cycling-fabric-1.21.8-1.0.20.jar",
+          "primary": true,
+          "size": 536703,
+          "file_type": null
+        }
+      ]
+    },
+    "visible_traders": {
+      "id": "dekfaADl",
+      "version_number": "0.1.2",
+      "game_versions": [
+        "1.21.6",
+        "1.21.7",
+        "1.21.8"
+      ],
+      "project_id": "AhllI99f",
+      "files": [
+        {
+          "id": "xdjUg8f3",
+          "hashes": {
+            "sha1": "4c276348d7292e90aa5767cab2327a9d98d7ebfd",
+            "sha512": "08e60b4f4308cbf1b806c9670042708df108c3f7f2479e070195303b1f53b9b91273de5ab6c7ca6b0692e73126258e59497fc912e521992180eb689800c3f10e"
+          },
+          "url": "https://cdn.modrinth.com/data/AhllI99f/versions/dekfaADl/VisibleTraders-0.1.2.jar",
+          "filename": "VisibleTraders-0.1.2.jar",
+          "primary": true,
+          "size": 63520,
+          "file_type": null
+        }
+      ]
+    },
+    "manifest_url": "https://piston-meta.mojang.com/v1/packages/5d557fffba309d5d68efa24a42bf73856008c5e3/1.21.8.json"
+  },
+  {
+    "minecraft": "1.21.9",
+    "fabric_api": "0.134.1+1.21.9",
+    "java": 21,
+    "trade_cycling": {
+      "id": "8gUJobPK",
+      "version_number": "fabric-1.21.9-1.0.19",
+      "game_versions": [
+        "1.21.9"
+      ],
+      "project_id": "qpPoAL6m",
+      "files": [
+        {
+          "id": "X0uPSNkH",
+          "hashes": {
+            "sha1": "71acc5c00bd8a30770f40765d83ace051acd124e",
+            "sha512": "7d100f6f544a82bfd1684444351bb3ee4156f984051a4b2d26903fb224133b35d510c92c7a62ae0bd43421c233b7f993161911877baa5b65195811b2e62faa50"
+          },
+          "url": "https://cdn.modrinth.com/data/qpPoAL6m/versions/8gUJobPK/trade-cycling-fabric-1.21.9-1.0.19.jar",
+          "filename": "trade-cycling-fabric-1.21.9-1.0.19.jar",
+          "primary": true,
+          "size": 531183,
+          "file_type": null
+        }
+      ]
+    },
+    "visible_traders": {
+      "id": "jdFh3igV",
+      "version_number": "0.1.2.2",
+      "game_versions": [
+        "1.21.9",
+        "1.21.10"
+      ],
+      "project_id": "AhllI99f",
+      "files": [
+        {
+          "id": "kDktJUMD",
+          "hashes": {
+            "sha512": "5175acc57b77efc86a35654f63b3b78c7cbbfa4fc5061db495d18e04065575dc9124d535760797dbbe421de35e65090e0a3734e91d4aad3ceccd45cbf5dd4612",
+            "sha1": "ea49c1555a36ac95d5afcfeee4ceb643d5210dd6"
+          },
+          "url": "https://cdn.modrinth.com/data/AhllI99f/versions/jdFh3igV/VisibleTraders-0.1.2.2.jar",
+          "filename": "VisibleTraders-0.1.2.2.jar",
+          "primary": true,
+          "size": 63873,
+          "file_type": null
+        }
+      ]
+    },
+    "manifest_url": "https://piston-meta.mojang.com/v1/packages/91f383c21d8cd06abc9a569f2976b58da192a642/1.21.9.json"
+  },
+  {
+    "minecraft": "1.21.10",
+    "fabric_api": "0.138.4+1.21.10",
+    "java": 21,
+    "trade_cycling": {
+      "id": "U95L1wcI",
+      "version_number": "fabric-1.21.10-1.0.20",
+      "game_versions": [
+        "1.21.10"
+      ],
+      "project_id": "qpPoAL6m",
+      "files": [
+        {
+          "id": "eCjVBf9M",
+          "hashes": {
+            "sha1": "4f250ba2b955e0f9dbf32cc37af4e83394058eb5",
+            "sha512": "113d7f3c983e64c72bc0f31e55a26b090f1dc2cc0c9a42e7f0bb3735209a4e9348eab38b7769200fafcaff387466de0ac3fc329be27a1cb4e25a9e82c5073196"
+          },
+          "url": "https://cdn.modrinth.com/data/qpPoAL6m/versions/U95L1wcI/trade-cycling-fabric-1.21.10-1.0.20.jar",
+          "filename": "trade-cycling-fabric-1.21.10-1.0.20.jar",
+          "primary": true,
+          "size": 566746,
+          "file_type": null
+        }
+      ]
+    },
+    "visible_traders": {
+      "id": "jdFh3igV",
+      "version_number": "0.1.2.2",
+      "game_versions": [
+        "1.21.9",
+        "1.21.10"
+      ],
+      "project_id": "AhllI99f",
+      "files": [
+        {
+          "id": "kDktJUMD",
+          "hashes": {
+            "sha512": "5175acc57b77efc86a35654f63b3b78c7cbbfa4fc5061db495d18e04065575dc9124d535760797dbbe421de35e65090e0a3734e91d4aad3ceccd45cbf5dd4612",
+            "sha1": "ea49c1555a36ac95d5afcfeee4ceb643d5210dd6"
+          },
+          "url": "https://cdn.modrinth.com/data/AhllI99f/versions/jdFh3igV/VisibleTraders-0.1.2.2.jar",
+          "filename": "VisibleTraders-0.1.2.2.jar",
+          "primary": true,
+          "size": 63873,
+          "file_type": null
+        }
+      ]
+    },
+    "manifest_url": "https://piston-meta.mojang.com/v1/packages/b14d03617088d907aef01138b042e8e5c1ab35d4/1.21.10.json"
+  },
+  {
+    "minecraft": "1.21.11",
+    "fabric_api": "0.141.6+1.21.11",
+    "java": 21,
+    "trade_cycling": {
+      "id": "PTZrdjTZ",
+      "version_number": "fabric-1.21.11-1.0.23",
+      "game_versions": [
+        "1.21.11"
+      ],
+      "project_id": "qpPoAL6m",
+      "files": [
+        {
+          "id": "G73ozRrE",
+          "hashes": {
+            "sha512": "5cd812c3ff91f72c877affeee780d8dbb802901f8d73c9310768a49e164f7efbe3166c93e3f3c51a14554b297025aa4882747154e087c3f17bbdbdf5f918a1b0",
+            "sha1": "3d8dd9c53a9e7aebedeb5f7b8e04e1918bfa3898"
+          },
+          "url": "https://cdn.modrinth.com/data/qpPoAL6m/versions/PTZrdjTZ/trade-cycling-fabric-1.21.11-1.0.23.jar",
+          "filename": "trade-cycling-fabric-1.21.11-1.0.23.jar",
+          "primary": true,
+          "size": 599409,
+          "file_type": null
+        }
+      ]
+    },
+    "visible_traders": {
+      "id": "1DVYzABW",
+      "version_number": "0.1.3.1",
+      "game_versions": [
+        "1.21.11"
+      ],
+      "project_id": "AhllI99f",
+      "files": [
+        {
+          "id": "oYRXjcJg",
+          "hashes": {
+            "sha1": "ff132d76511982639ee82506c9c9c538515e0b81",
+            "sha512": "0e9adc45744576bba123187bf86a4aab7086252f8519a895e0c574599c00d172d08ff8b8c4a84268f39534c6b48da263b91902eaddbcffb34438cd907304fdf6"
+          },
+          "url": "https://cdn.modrinth.com/data/AhllI99f/versions/1DVYzABW/VisibleTraders-0.1.3.1.jar",
+          "filename": "VisibleTraders-0.1.3.1.jar",
+          "primary": true,
+          "size": 65218,
+          "file_type": null
+        }
+      ]
+    },
+    "manifest_url": "https://piston-meta.mojang.com/v1/packages/718cd84b4912691fe5de829aab6876a4b7f6c5c4/1.21.11.json"
+  }
+]

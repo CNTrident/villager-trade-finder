@@ -135,5 +135,9 @@
   "chat.easyautocycler.item_found_with_count": "§aTarget item trade found after %s refreshes.",
   "chat.easyautocycler.max_cycles_reached": "§cReached the safety limit of %s refreshes; auto-cycling stopped.",
   "chat.easyautocycler.stopped_with_count": "§eStopped manually after %s refreshes this run.",
-  "chat.easyautocycler.auto_disabled": "§eSwitched %s matched AUTO target(s) to OFF."
+  "chat.easyautocycler.auto_disabled": "§eSwitched %s matched AUTO target(s) to OFF.",
+  "gui.easyautocycler.filter.potion": "Potion type (Chinese/English, optional)",
+  "gui.easyautocycler.filter.hint.potion": "E.g. Arrow of Poison / strong_poison; blank = any potion",
+  "gui.easyautocycler.filter.subtitle.potion": "Master arrows: Later/All trades need VisibleTraders",
+  "gui.easyautocycler.filter.error.invalid_potion": "Not in the fletcher's tradeable potion list: %s"
 }

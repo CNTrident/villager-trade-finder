@@ -685,7 +685,8 @@ public class AutomationManager {
 
     private boolean matchesTargetItem(ItemStack stack, FilterEntry filter) {
         if (stack.isEmpty() || filter.getItemId() == null || stack.getCount() < filter.getMinCount()) return false;
-        return BuiltInRegistries.ITEM.getKey(stack.getItem()).equals(filter.getItemId());
+        return BuiltInRegistries.ITEM.getKey(stack.getItem()).equals(filter.getItemId())
+                && filter.matchesPotion(stack);
     }
 
     private boolean matchesPayment(ItemStack stack, FilterEntry filter) {

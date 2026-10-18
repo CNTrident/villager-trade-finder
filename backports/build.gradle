@@ -1,0 +1,44 @@
+plugins { id 'fabric-loom' version '1.17.0-alpha.5' }
+
+def mc = providers.gradleProperty('mc').getOrElse('1.21.11')
+def entry = new groovy.json.JsonSlurper().parse(file('matrix.json')).find { it.minecraft == mc }
+if (entry == null) throw new GradleException("Unresolved Minecraft version ${mc}")
+version = '1.8.0'
+group = 'com.uncraftbar.easyautocycler'
+base { archivesName = "villager_trade_finder-fabric-${mc}" }
+layout.buildDirectory = file("build/${mc}")
+def codeRoot = !providers.gradleProperty('generated').isPresent() && file("versions/${mc}").isDirectory()
+        ? "versions/${mc}" : "generated/${mc}"
+sourceSets {
+    main {
+        java.setSrcDirs(["${codeRoot}/java"])
+        resources.setSrcDirs(["${codeRoot}/resources"])
+    }
+    test { java.setSrcDirs(["${codeRoot}/tests"]) }
+}
+dependencies {
+    minecraft "com.mojang:minecraft:${mc}"
+    mappings loom.officialMojangMappings()
+    modImplementation 'net.fabricmc:fabric-loader:0.18.6'
+    modImplementation fabricApi.module('fabric-api-base', entry.fabric_api)
+    modImplementation fabricApi.module('fabric-key-binding-api-v1', entry.fabric_api)
+    modImplementation fabricApi.module('fabric-screen-api-v1', entry.fabric_api)
+    compileOnly 'org.jspecify:jspecify:1.0.0'
+}
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = entry.java as int
+}
+loom { mixin { useLegacyMixinAp = true; defaultRefmapName = 'easyautocycler.refmap.json' } }
+jar { from('../LICENSE') }
+test { exclude '**/BackportChecks*.class' }
+tasks.register('verifyBackport', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.uncraftbar.easyautocycler.BackportChecks'
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
+    workingDir = layout.buildDirectory.dir('checks').get().asFile
+    doFirst { workingDir.mkdirs() }
+}
+check.dependsOn verifyBackport

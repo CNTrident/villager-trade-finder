@@ -5,7 +5,7 @@
 [![Minecraft](https://img.shields.io/badge/Minecraft-26.2-62B47A)](https://www.minecraft.net/)
 [![Fabric](https://img.shields.io/badge/Loader-Fabric-DBD0B4)](https://fabricmc.net/)
 
-面向 Minecraft Java Edition 26.1.2 / 26.2 + Fabric 的客户端便捷模组。它与对应版本的
+面向 Minecraft Java Edition 1.20～1.21.11（全部 19 个正式版本）以及 26.1.2 / 26.2 + Fabric 的客户端便捷模组。它与对应版本的
 [Trade Cycling](https://www.curseforge.com/minecraft/mc-mods/trade-cycling)
 配合，在未锁定的职业村民交易界面中自动刷新交易，直到出现满足条件的附魔书或物品。
 
@@ -13,11 +13,15 @@
 
 从 [GitHub Releases](https://github.com/CNTrident/villager-trade-finder/releases/latest) 下载与 Minecraft 版本完全对应的 JAR：
 
-- Minecraft 26.2：`villager_trade_finder-fabric-26.2-1.7.0.jar`
-- Minecraft 26.1.2：`villager_trade_finder-fabric-26.1.2-1.7.0.jar`
+- Minecraft 26.2：`villager_trade_finder-fabric-26.2-1.8.0.jar`
+- Minecraft 26.1.2：`villager_trade_finder-fabric-26.1.2-1.8.0.jar`
+- Minecraft 1.20～1.21.11：选择 `villager_trade_finder-fabric-<Minecraft版本>-1.8.0.jar`。也可下载 `installers.zip` 总包，解压后仅安装匹配游戏版本的一份。
+
+各版本源码位于 [`backports/versions/`](backports/versions/)，准确依赖和文件校验值见 Release 附件 `version-manifest.json` 与 `SHA256SUMS.txt`。带 `-sources` 后缀的 JAR 是源码，不可放入 `mods` 目录作为模组安装。
 
 ## 功能
 
+- 制箭师的药水箭支持按具体药水类型筛选，中英文自动补全可区分普通、延长和强化版本；药水类型留空匹配任意药水箭。候选优先使用服务器的可交易药水标签。
 - 每种村民职业都有独立的目标列表和 AND/OR 模式；界面标题和物品候选随当前职业变化，流浪商人不会启用本模组。
 - 盔甲商、武器商、工具商、渔夫和制箭师的物品目标可用逗号添加多个中文/英文目标附魔及对应精确等级。
 - 设置目标附魔后会严格匹配完整附魔集合；包含任何未指定的额外附魔都不会判定为命中。
@@ -43,21 +47,23 @@
 客户端 `mods` 目录放入：
 
 1. 与游戏版本对应的 Villager Trade Finder JAR
-2. 对应版本的 Trade Cycling 1.0.21（26.2 或 26.1.2）
+2. 与游戏版本匹配的 Trade Cycling（26.x 使用 1.0.21 或兼容新版；旧版本依赖见版本清单）
 3. 与游戏版本匹配的 Fabric API
 
-如需匹配“后续交易”或“全部交易”，客户端和服务器还需要安装 VisibleTraders 2.4.0 或更高版本。
+如需匹配“后续交易”或“全部交易”，客户端和服务器还需要安装对应游戏版本的 VisibleTraders；26.1.2 对应 2.4.x，26.2 对应 2.5.x，旧游戏版本依赖见版本清单。
 
 多人游戏中，服务器也必须安装 Trade Cycling；本模组自身只需安装在客户端。
-Minecraft 26.1.2、26.2 和本项目的构建环境均要求 Java 25。不要在 26.1.2 与 26.2 之间混用 JAR。
+游戏运行时，1.20～1.20.4 使用 Java 17，1.20.5～1.21.11 使用 Java 21，26.1.2 / 26.2 使用 Java 25。构建本项目使用 Java 25。不要跨 Minecraft 版本混用 JAR。
 
 ### 使用注意事项
 
+- 药水箭是制箭师的大师级交易。添加物品“药水箭”（`minecraft:tipped_arrow`）后填写药水类型，例如 `minecraft:strong_poison`；在未锁定村民上预筛未来药水箭时选择“后续交易”或“全部交易”，并安装 VisibleTraders。原版已锁定的村民不能继续刷新。
 - 只对尚未完成过交易、仍可刷新职业的村民使用；一旦交易锁定，模组会停止循环。
 - 刷新必须由服务器上的 Trade Cycling 支持；网络响应超时或达到 100000 次时会自动停止。
 - “后续交易”和“全部交易”依赖 VisibleTraders；服务器未提供锁定交易数据时只能可靠判断初始交易。
 - 显示和筛选的是原始绿宝石价格，不包含治愈、声望、村庄英雄或需求变化造成的价格调整。
 - 自动操作前请确认目标条件与职业列表正确，避免长时间无效刷新。
+- 1.20、1.20.3、1.21.2 的 Trade Cycling 未在 Modrinth 单独标注成品；请核对其官方对应版本，不能把其他版本的依赖 JAR 直接混装。
 
 ## 使用
 
@@ -83,9 +89,12 @@ Minecraft 26.1.2、26.2 和本项目的构建环境均要求 Java 25。不要在
 
 # 构建 Minecraft 26.1.2
 .\gradlew.bat clean build -Pminecraft_version=26.1.2 -Pfabric_api_version=0.146.0+26.1.2 -Ptrade_cycling_file_id=8020648
+
+# 构建任一已同步源码的旧版本（把 1.21.11 改成目标版本）
+.\gradlew.bat -p backports build -Pmc=1.21.11
 ```
 
-产物位于 `build/libs/`。
+26.x 产物位于 `build/libs/`；旧版本产物位于 `backports/build/<Minecraft版本>/libs/`。旧版本采用独立源码目录，保留职业列表、药水箭、目标状态及交易范围设置；目标列表使用分页按钮浏览。
 
 ## 开源来源与许可
 
