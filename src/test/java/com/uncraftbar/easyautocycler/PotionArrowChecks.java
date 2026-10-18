@@ -2,6 +2,8 @@ package com.uncraftbar.easyautocycler;
 
 import com.uncraftbar.easyautocycler.config.FilterConfig;
 import com.uncraftbar.easyautocycler.compat.VisibleTradersCompat;
+import com.uncraftbar.easyautocycler.compat.MinecraftApiCompat;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.uncraftbar.easyautocycler.filter.FilterEntry;
 import com.uncraftbar.easyautocycler.gui.PotionNameResolver;
 import net.minecraft.SharedConstants;
@@ -10,7 +12,6 @@ import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.Bootstrap;
-import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.ItemStack;
@@ -27,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /** Headless regression checks using real Minecraft potion/item components. */
@@ -35,6 +35,24 @@ public final class PotionArrowChecks {
     public static void main(String[] args) throws Exception {
         SharedConstants.tryDetectVersion();
         Bootstrap.bootStrap();
+        boolean sdl = MinecraftApiCompat.keyboardType().name().equals("KEYBOARD");
+        require(InputConstants.KEY_R == (sdl ? 21 : 82) && InputConstants.KEY_C == (sdl ? 6 : 67),
+                "default shortcut codes must use the current keyboard backend");
+        require(InputConstants.KEY_PAGEDOWN == (sdl ? 78 : 267)
+                && InputConstants.KEY_RETURN == (sdl ? 40 : 257), "completion navigation key codes");
+        require(InputConstants.MOUSE_BUTTON_LEFT == (sdl ? 1 : 0), "completion click button code");
+        var tradeEntries = net.minecraft.core.HolderSet.<net.minecraft.world.item.trading.VillagerTrade>direct();
+        var tradeSet = new net.minecraft.world.item.trading.TradeSet(tradeEntries, null, false, Optional.empty());
+        require(MinecraftApiCompat.trades(tradeSet) == tradeEntries, "version-specific trade list accessor");
+        Class<?> cycleButton = Class.forName("de.maxhenkel.tradecycling.gui.CycleTradesButton", false,
+                PotionArrowChecks.class.getClassLoader());
+        require(cycleButton.getMethod("canCycle", net.minecraft.world.inventory.MerchantMenu.class)
+                .getReturnType() == boolean.class, "Trade Cycling canCycle contract");
+        Class<?> cyclePacket = Class.forName("de.maxhenkel.tradecycling.net.CycleTradesPacket", false,
+                PotionArrowChecks.class.getClassLoader());
+        cyclePacket.getDeclaredConstructor();
+        require(net.minecraft.network.protocol.common.custom.CustomPacketPayload.class.isAssignableFrom(cyclePacket),
+                "Trade Cycling payload contract");
         // A headless bootstrap does not load the data pack's item components.
         // These checks only need real item identity and explicit potion contents.
         for (var item : List.of(Items.TIPPED_ARROW, Items.POTION, Items.BOW, Items.EMERALD, Items.ARROW)) {
@@ -105,7 +123,7 @@ public final class PotionArrowChecks {
         require(!(boolean) matchTrade.invoke(AutomationManager.INSTANCE, later, target), "potion match must still respect count");
 
         PotionNameResolver names = new PotionNameResolver(
-                RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY), new FixtureResources());
+                RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY), FixtureResources.create());
         require(id("poison").equals(names.resolve("剧毒之箭")), "Chinese base arrow name");
         require(id("strong_poison").equals(names.resolve("Arrow of Poison II")), "English strong arrow name");
         require(id("long_poison").equals(names.resolve("剧毒之箭（延长）")), "Chinese extended variant");
@@ -130,8 +148,28 @@ public final class PotionArrowChecks {
         if (!condition) throw new AssertionError(message);
     }
 
-    private static final class FixtureResources implements ResourceManager {
-        public Set<String> getNamespaces() { return Set.of("minecraft", "easyautocycler"); }
+    private static final class FixtureResources implements java.lang.reflect.InvocationHandler {
+        static ResourceManager create() {
+            return (ResourceManager) java.lang.reflect.Proxy.newProxyInstance(
+                    ResourceManager.class.getClassLoader(), new Class<?>[]{ResourceManager.class}, new FixtureResources());
+        }
+
+        @Override
+        public Object invoke(Object proxy, java.lang.reflect.Method method, Object[] args) {
+            return switch (method.getName()) {
+                case "getNamespaces" -> Set.of("minecraft", "easyautocycler");
+                case "getResource" -> getResource((Identifier) args[0]);
+                case "getResourceStack" -> getResource((Identifier) args[0]).map(List::of).orElse(List.of());
+                case "listResources", "listResourceStacks" -> Map.of();
+                case "listPacks" -> Stream.empty();
+                case "close" -> null;
+                case "toString" -> "PotionArrowChecks.FixtureResources";
+                case "hashCode" -> System.identityHashCode(proxy);
+                case "equals" -> proxy == args[0];
+                default -> throw new UnsupportedOperationException(method.toString());
+            };
+        }
+
         public Optional<Resource> getResource(Identifier id) {
             String json = switch (id.toString()) {
                 case "minecraft:lang/en_us.json" -> "{\"item.minecraft.tipped_arrow.effect.poison\":\"Arrow of Poison\",\"effect.minecraft.poison\":\"Poison\"}";
@@ -146,9 +184,5 @@ public final class PotionArrowChecks {
             }
             return Optional.empty();
         }
-        public List<Resource> getResourceStack(Identifier id) { return getResource(id).map(List::of).orElse(List.of()); }
-        public Map<Identifier, Resource> listResources(String prefix, Predicate<Identifier> predicate) { return Map.of(); }
-        public Map<Identifier, List<Resource>> listResourceStacks(String prefix, Predicate<Identifier> predicate) { return Map.of(); }
-        public Stream<PackResources> listPacks() { return Stream.empty(); }
     }
 }

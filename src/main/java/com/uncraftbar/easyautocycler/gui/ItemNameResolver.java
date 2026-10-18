@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.uncraftbar.easyautocycler.EasyAutoCyclerMod;
+import com.uncraftbar.easyautocycler.compat.MinecraftApiCompat;
 import com.uncraftbar.easyautocycler.mixin.VillagerTradeAccessor;
 import net.minecraft.client.resources.language.ClientLanguage;
 import net.minecraft.core.Registry;
@@ -98,7 +99,7 @@ public final class ItemNameResolver {
                 profession.tradeSetsByLevel().values().forEach(tradeSetKey -> {
                     TradeSet tradeSet = tradeSets.getValue(tradeSetKey);
                     if (tradeSet == null) return;
-                    for (var tradeHolder : tradeSet.getTrades()) {
+                    for (var tradeHolder : MinecraftApiCompat.trades(tradeSet)) {
                         VillagerTradeAccessor trade = (VillagerTradeAccessor) (Object) tradeHolder.value();
                         addItem(result, items, trade.easyAutoCycler$getGives().item().value());
                         addCostItem(result, items, trade.easyAutoCycler$getWants());

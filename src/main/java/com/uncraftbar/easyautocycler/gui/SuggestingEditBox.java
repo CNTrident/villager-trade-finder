@@ -6,7 +6,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.glfw.GLFW;
+import com.mojang.blaze3d.platform.InputConstants;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -106,28 +106,28 @@ public class SuggestingEditBox extends EditBox {
     @Override
     public boolean keyPressed(KeyEvent event) {
         if (isFocused() && !matches.isEmpty()) {
-            if (event.key() == GLFW.GLFW_KEY_DOWN) {
+            if (event.key() == InputConstants.KEY_DOWN) {
                 selectedSuggestion = (selectedSuggestion + 1) % matches.size();
                 suggestionPage = selectedSuggestion / SUGGESTIONS_PER_PAGE;
                 updateInlineSuggestion();
                 return true;
             }
-            if (event.key() == GLFW.GLFW_KEY_UP) {
+            if (event.key() == InputConstants.KEY_UP) {
                 selectedSuggestion = (selectedSuggestion - 1 + matches.size()) % matches.size();
                 suggestionPage = selectedSuggestion / SUGGESTIONS_PER_PAGE;
                 updateInlineSuggestion();
                 return true;
             }
-            if (event.key() == GLFW.GLFW_KEY_PAGE_DOWN) {
+            if (event.key() == InputConstants.KEY_PAGEDOWN) {
                 changePage(1);
                 return true;
             }
-            if (event.key() == GLFW.GLFW_KEY_PAGE_UP) {
+            if (event.key() == InputConstants.KEY_PAGEUP) {
                 changePage(-1);
                 return true;
             }
-            if (event.key() == GLFW.GLFW_KEY_TAB || event.key() == GLFW.GLFW_KEY_ENTER
-                    || event.key() == GLFW.GLFW_KEY_KP_ENTER) {
+            if (event.key() == InputConstants.KEY_TAB || event.key() == InputConstants.KEY_RETURN
+                    || event.key() == InputConstants.KEY_NUMPADENTER) {
                 acceptSuggestion(selectedSuggestion);
                 return true;
             }
@@ -255,7 +255,7 @@ public class SuggestingEditBox extends EditBox {
      * rectangle and therefore is not reached by newer Screen event routing.
      */
     public boolean clickSuggestion(MouseButtonEvent event) {
-        if (event.button() == 0 && isFocused() && dropdownHeight > 0
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && isFocused() && dropdownHeight > 0
                 && event.x() >= dropdownX && event.x() < dropdownX + dropdownWidth
                 && event.y() >= dropdownY && event.y() < dropdownY + dropdownHeight) {
             int index = ((int) event.y() - dropdownY - 1) / SUGGESTION_ROW_HEIGHT;

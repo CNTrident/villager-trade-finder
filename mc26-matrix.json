@@ -2,5 +2,6 @@
   {"minecraft":"26.1","fabric_api":"0.145.1+26.1","trade_cycling_file_id":"8020648","java":25,"compatibility_source":"src/compat/26_1_2/java"},
   {"minecraft":"26.1.1","fabric_api":"0.145.4+26.1.1","trade_cycling_file_id":"8020648","java":25,"compatibility_source":"src/compat/26_1_2/java"},
   {"minecraft":"26.1.2","fabric_api":"0.146.0+26.1.2","trade_cycling_file_id":"8020648","java":25,"compatibility_source":"src/compat/26_1_2/java"},
-  {"minecraft":"26.2","fabric_api":"0.158.0+26.2","trade_cycling_file_id":"8271477","java":25,"compatibility_source":"src/compat/26_2/java"}
+  {"minecraft":"26.2","fabric_api":"0.158.0+26.2","trade_cycling_file_id":"8271477","java":25,"compatibility_source":"src/compat/26_2/java"},
+  {"minecraft":"26.3","fabric_api":"0.163.0+26.3","fabric_loader":"0.19.3","trade_cycling_file_id":"9155650","java":25,"compatibility_source":"src/compat/26_3/java"}
 ]

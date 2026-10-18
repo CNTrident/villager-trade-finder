@@ -173,6 +173,8 @@ public final class MinecraftScreenCompat {
 }'''
 
     for path, text in sources.items():
+        text = text.replace('import com.uncraftbar.easyautocycler.compat.MinecraftApiCompat;\n', '')
+        text = text.replace('MinecraftApiCompat.keyboardType()', 'InputConstants.Type.KEYSYM')
         text = text.replace('net.minecraft.client.gui.GuiGraphicsExtractor','net.minecraft.client.gui.GuiGraphics')
         text = text.replace('GuiGraphicsExtractor','GuiGraphics').replace('extractRenderState','render')
         if not block('net.minecraft.world.entity.npc.villager.VillagerTrades'):

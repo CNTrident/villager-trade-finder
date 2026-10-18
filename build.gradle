@@ -7,7 +7,7 @@ version = mod_version
 group = mod_group_id
 
 def minecraftCompatibility = ['26.1': '26_1_2', '26.1.1': '26_1_2',
-                              '26.1.2': '26_1_2', '26.2': '26_2'][minecraft_version]
+                              '26.1.2': '26_1_2', '26.2': '26_2', '26.3': '26_3'][minecraft_version]
 if (minecraftCompatibility == null) {
     throw new GradleException("Unsupported Minecraft version: ${minecraft_version}; use -p backports for 1.20-1.21.11")
 }
@@ -58,9 +58,11 @@ dependencies {
 processResources {
     inputs.property 'version', mod_version
     inputs.property 'minecraft_version', minecraft_version
+    inputs.property 'fabricloader_min', minecraft_version == '26.3' ? '0.19.3' : '0.18.6'
 
     filesMatching('fabric.mod.json') {
-        expand 'version': mod_version, 'minecraft_version': minecraft_version
+        expand 'version': mod_version, 'minecraft_version': minecraft_version,
+                'fabricloader_min': minecraft_version == '26.3' ? '0.19.3' : '0.18.6'
     }
 }
 

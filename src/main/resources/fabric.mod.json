@@ -26,7 +26,7 @@
     "easyautocycler.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.18.6",
+    "fabricloader": ">=${fabricloader_min}",
     "minecraft": "${minecraft_version}",
     "java": ">=25",
     "fabric-api-base": "*",

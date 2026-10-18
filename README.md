@@ -2,10 +2,10 @@
 
 [![CI](https://github.com/CNTrident/villager-trade-finder/actions/workflows/build.yml/badge.svg)](https://github.com/CNTrident/villager-trade-finder/actions/workflows/build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Minecraft](https://img.shields.io/badge/Minecraft-26.2-62B47A)](https://www.minecraft.net/)
+[![Minecraft](https://img.shields.io/badge/Minecraft-26.3-62B47A)](https://www.minecraft.net/)
 [![Fabric](https://img.shields.io/badge/Loader-Fabric-DBD0B4)](https://fabricmc.net/)
 
-面向 Minecraft Java Edition 1.20～1.21.11（全部 19 个正式版本）以及 26.1～26.2（26.1、26.1.1、26.1.2、26.2）+ Fabric 的客户端便捷模组。它与对应版本的
+面向 Minecraft Java Edition 1.20～1.21.11（全部 19 个正式版本）以及 26.1～26.3（26.1、26.1.1、26.1.2、26.2、26.3）+ Fabric 的客户端便捷模组。它与对应版本的
 [Trade Cycling](https://www.curseforge.com/minecraft/mc-mods/trade-cycling)
 配合，在未锁定的职业村民交易界面中自动刷新交易，直到出现满足条件的附魔书或物品。
 
@@ -13,14 +13,15 @@
 
 从 [GitHub Releases](https://github.com/CNTrident/villager-trade-finder/releases/latest) 下载与 Minecraft 版本完全对应的 JAR：
 
+- Minecraft 26.3：`villager_trade_finder-fabric-26.3-1.8.0.jar`
 - Minecraft 26.2：`villager_trade_finder-fabric-26.2-1.8.0.jar`
 - Minecraft 26.1.2：`villager_trade_finder-fabric-26.1.2-1.8.0.jar`
 - Minecraft 26.1 / 26.1.1：分别选择 `villager_trade_finder-fabric-26.1-1.8.0.jar` / `villager_trade_finder-fabric-26.1.1-1.8.0.jar`
 - Minecraft 1.20～1.21.11：选择 `villager_trade_finder-fabric-<Minecraft版本>-1.8.0.jar`。也可下载 `installers.zip` 总包，解压后仅安装匹配游戏版本的一份。
 
-补全版 Release 的 `all-installers.zip` 包含上述全部 23 个游戏版本的安装包。
+26.3 发布的 `all-24-installers.zip` 包含上述全部 24 个游戏版本的安装包；此前 1.8.0-complete 发布的 `all-installers.zip` 包含 26.3 之前的 23 个版本。
 
-各版本源码位于 [`backports/versions/`](backports/versions/)，准确依赖和文件校验值见 Release 附件 `version-manifest.json` 与 `SHA256SUMS.txt`。带 `-sources` 后缀的 JAR 是源码，不可放入 `mods` 目录作为模组安装。
+1.20～1.21.11 的独立源码位于 [`backports/versions/`](backports/versions/)，26.x 使用根目录源码与 [`mc26-matrix.json`](mc26-matrix.json) 中的对应兼容目录。准确依赖和文件校验值见 Release 附件 `version-manifest.json` 与 `SHA256SUMS.txt`。带 `-sources` 后缀的 JAR 是源码，不可放入 `mods` 目录作为模组安装。
 
 ## 功能
 
@@ -53,10 +54,10 @@
 2. 与游戏版本匹配的 Trade Cycling（26.x 使用 1.0.21 或兼容新版；旧版本依赖见版本清单）
 3. 与游戏版本匹配的 Fabric API
 
-如需匹配“后续交易”或“全部交易”，客户端和服务器还需要安装对应游戏版本的 VisibleTraders；26.1 / 26.1.1 / 26.1.2 对应 2.4.x，26.2 对应 2.5.x，旧游戏版本依赖见版本清单。
+如需匹配“后续交易”或“全部交易”，客户端和服务器还需要安装对应游戏版本的 VisibleTraders；26.1 / 26.1.1 / 26.1.2 对应 2.4.x，26.2 对应 2.5.x，26.3 使用 2.5.1 或兼容新版，旧游戏版本依赖见版本清单。
 
 多人游戏中，服务器也必须安装 Trade Cycling；本模组自身只需安装在客户端。
-游戏运行时，1.20～1.20.4 使用 Java 17，1.20.5～1.21.11 使用 Java 21，26.1～26.2 使用 Java 25。构建本项目使用 Java 25。不要跨 Minecraft 版本混用 JAR。
+游戏运行时，1.20～1.20.4 使用 Java 17，1.20.5～1.21.11 使用 Java 21，26.1～26.3 使用 Java 25。26.3 搭配 Trade Cycling 1.0.23 时需 Fabric Loader 0.19.3 或更新版本。构建本项目使用 Java 25。不要跨 Minecraft 版本混用 JAR。
 
 ### 使用注意事项
 
@@ -87,8 +88,11 @@
 使用 Java 25：
 
 ```powershell
-# 默认构建 Minecraft 26.2
+# 默认构建 Minecraft 26.3
 .\gradlew.bat build
+
+# 构建 Minecraft 26.2
+.\gradlew.bat clean build -Pminecraft_version=26.2 -Pfabric_api_version=0.158.0+26.2 -Ptrade_cycling_file_id=8271477
 
 # 构建 Minecraft 26.1.2
 .\gradlew.bat clean build -Pminecraft_version=26.1.2 -Pfabric_api_version=0.146.0+26.1.2 -Ptrade_cycling_file_id=8020648

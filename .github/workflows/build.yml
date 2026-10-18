@@ -16,6 +16,9 @@ jobs:
     strategy:
       matrix:
         include:
+          - minecraft: "26.3"
+            fabric_api: "0.163.0+26.3"
+            trade_cycling_file: "9155650"
           - minecraft: "26.2"
             fabric_api: "0.158.0+26.2"
             trade_cycling_file: "8271477"
