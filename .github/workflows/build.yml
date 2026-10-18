@@ -22,6 +22,12 @@ jobs:
           - minecraft: "26.1.2"
             fabric_api: "0.146.0+26.1.2"
             trade_cycling_file: "8020648"
+          - minecraft: "26.1.1"
+            fabric_api: "0.145.4+26.1.1"
+            trade_cycling_file: "8020648"
+          - minecraft: "26.1"
+            fabric_api: "0.145.1+26.1"
+            trade_cycling_file: "8020648"
     steps:
       - name: Check out repository
         uses: actions/checkout@v4

@@ -5,7 +5,7 @@
 [![Minecraft](https://img.shields.io/badge/Minecraft-26.2-62B47A)](https://www.minecraft.net/)
 [![Fabric](https://img.shields.io/badge/Loader-Fabric-DBD0B4)](https://fabricmc.net/)
 
-面向 Minecraft Java Edition 1.20～1.21.11（全部 19 个正式版本）以及 26.1.2 / 26.2 + Fabric 的客户端便捷模组。它与对应版本的
+面向 Minecraft Java Edition 1.20～1.21.11（全部 19 个正式版本）以及 26.1～26.2（26.1、26.1.1、26.1.2、26.2）+ Fabric 的客户端便捷模组。它与对应版本的
 [Trade Cycling](https://www.curseforge.com/minecraft/mc-mods/trade-cycling)
 配合，在未锁定的职业村民交易界面中自动刷新交易，直到出现满足条件的附魔书或物品。
 
@@ -15,7 +15,10 @@
 
 - Minecraft 26.2：`villager_trade_finder-fabric-26.2-1.8.0.jar`
 - Minecraft 26.1.2：`villager_trade_finder-fabric-26.1.2-1.8.0.jar`
+- Minecraft 26.1 / 26.1.1：分别选择 `villager_trade_finder-fabric-26.1-1.8.0.jar` / `villager_trade_finder-fabric-26.1.1-1.8.0.jar`
 - Minecraft 1.20～1.21.11：选择 `villager_trade_finder-fabric-<Minecraft版本>-1.8.0.jar`。也可下载 `installers.zip` 总包，解压后仅安装匹配游戏版本的一份。
+
+补全版 Release 的 `all-installers.zip` 包含上述全部 23 个游戏版本的安装包。
 
 各版本源码位于 [`backports/versions/`](backports/versions/)，准确依赖和文件校验值见 Release 附件 `version-manifest.json` 与 `SHA256SUMS.txt`。带 `-sources` 后缀的 JAR 是源码，不可放入 `mods` 目录作为模组安装。
 
@@ -50,10 +53,10 @@
 2. 与游戏版本匹配的 Trade Cycling（26.x 使用 1.0.21 或兼容新版；旧版本依赖见版本清单）
 3. 与游戏版本匹配的 Fabric API
 
-如需匹配“后续交易”或“全部交易”，客户端和服务器还需要安装对应游戏版本的 VisibleTraders；26.1.2 对应 2.4.x，26.2 对应 2.5.x，旧游戏版本依赖见版本清单。
+如需匹配“后续交易”或“全部交易”，客户端和服务器还需要安装对应游戏版本的 VisibleTraders；26.1 / 26.1.1 / 26.1.2 对应 2.4.x，26.2 对应 2.5.x，旧游戏版本依赖见版本清单。
 
 多人游戏中，服务器也必须安装 Trade Cycling；本模组自身只需安装在客户端。
-游戏运行时，1.20～1.20.4 使用 Java 17，1.20.5～1.21.11 使用 Java 21，26.1.2 / 26.2 使用 Java 25。构建本项目使用 Java 25。不要跨 Minecraft 版本混用 JAR。
+游戏运行时，1.20～1.20.4 使用 Java 17，1.20.5～1.21.11 使用 Java 21，26.1～26.2 使用 Java 25。构建本项目使用 Java 25。不要跨 Minecraft 版本混用 JAR。
 
 ### 使用注意事项
 
@@ -90,11 +93,17 @@
 # 构建 Minecraft 26.1.2
 .\gradlew.bat clean build -Pminecraft_version=26.1.2 -Pfabric_api_version=0.146.0+26.1.2 -Ptrade_cycling_file_id=8020648
 
+# 构建 Minecraft 26.1.1
+.\gradlew.bat clean build -Pminecraft_version=26.1.1 -Pfabric_api_version=0.145.4+26.1.1 -Ptrade_cycling_file_id=8020648
+
+# 构建 Minecraft 26.1
+.\gradlew.bat clean build -Pminecraft_version=26.1 -Pfabric_api_version=0.145.1+26.1 -Ptrade_cycling_file_id=8020648
+
 # 构建任一已同步源码的旧版本（把 1.21.11 改成目标版本）
 .\gradlew.bat -p backports build -Pmc=1.21.11
 ```
 
-26.x 产物位于 `build/libs/`；旧版本产物位于 `backports/build/<Minecraft版本>/libs/`。旧版本采用独立源码目录，保留职业列表、药水箭、目标状态及交易范围设置；目标列表使用分页按钮浏览。
+26.x 产物位于 `build/libs/`；各版本构建参数及兼容源码目录见 [`mc26-matrix.json`](mc26-matrix.json)。旧版本产物位于 `backports/build/<Minecraft版本>/libs/`。旧版本采用独立源码目录，保留职业列表、药水箭、目标状态及交易范围设置；目标列表使用分页按钮浏览。
 
 ## 开源来源与许可
 
