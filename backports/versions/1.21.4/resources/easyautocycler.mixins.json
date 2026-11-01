@@ -5,7 +5,8 @@
   "client": [
     "MinecraftTickMixin",
     "ClientPacketListenerMixin",
-    "MerchantMenuAccessor"
+    "MerchantMenuAccessor",
+    "VillagerInteractionMixin"
   ],
   "injectors": {
     "defaultRequire": 1

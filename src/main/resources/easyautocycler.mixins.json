@@ -6,7 +6,9 @@
     "MinecraftTickMixin",
     "ClientPacketListenerMixin",
     "MerchantMenuAccessor",
-    "VillagerTradeAccessor"
+    "VillagerInteractionMixin",
+    "VillagerTradeAccessor",
+    "VisibleTradersClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1

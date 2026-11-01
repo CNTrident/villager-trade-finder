@@ -15,7 +15,6 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.inventory.MerchantMenu;
@@ -45,12 +44,11 @@ public class AutomationManager {
     }
 
     private final AtomicBoolean isRunning = new AtomicBoolean(false);
-    private boolean waitingForOfferUpdate = false;
-    private boolean waitingForVisibleTradersOffers = false;
-    private boolean offerUpdateReadyForEvaluation = false;
+    private final OfferUpdateState offerUpdate = new OfferUpdateState();
+    @Nullable private MerchantMenu runningMenu;
     private int waitingForOfferTicks = 0;
     private int currentCycles = 0;
-    private static final int MAX_CYCLES_SAFETY = 100_000;
+    private static final int MAX_CYCLES_SAFETY = 1_000_000;
     private static final int OFFER_UPDATE_TIMEOUT_TICKS = 100;
 
     private static boolean initialized = false;
@@ -123,12 +121,8 @@ public class AutomationManager {
 
     @Nullable
     public ResourceLocation getVillagerProfessionId(Screen screen) {
-        if (!(screen instanceof MerchantScreen merchantScreen)
-                || !(merchantScreen.getTitle().getContents() instanceof TranslatableContents title)) return null;
-        String key = title.getKey();
-        String[] parts = key.split("\\.");
-        if (parts.length < 4 || !"entity".equals(parts[0]) || !"villager".equals(parts[2])) return null;
-        return ResourceLocation.tryParse(parts[1] + ":" + parts[3]);
+        if (!(screen instanceof MerchantScreen merchantScreen)) return null;
+        return VillagerTradeContext.professionId(merchantScreen.getMenu());
     }
     @Nullable public ResourceLocation getTargetEnchantmentId() { return targetEnchantmentId; }
     @Nullable public ResourceLocation getTargetItemId() { return targetItemId; }
@@ -318,9 +312,8 @@ public class AutomationManager {
         if (isRunning.compareAndSet(false, true)) {
             EasyAutoCyclerMod.LOGGER.debug("Starting network-synchronized villager trade cycling.");
             this.sendMessageToPlayer(Component.translatable("chat.easyautocycler.started"));
-            this.waitingForOfferUpdate = false;
-            this.waitingForVisibleTradersOffers = false;
-            this.offerUpdateReadyForEvaluation = false;
+            this.offerUpdate.reset();
+            this.runningMenu = merchantScreen.getMenu();
             this.waitingForOfferTicks = 0;
             this.currentCycles = 0;
             this.lastMatchedFilter = null;
@@ -335,9 +328,8 @@ public class AutomationManager {
 
     private boolean stopInternal(String reason) {
         if (isRunning.compareAndSet(true, false)) {
-            waitingForOfferUpdate = false;
-            waitingForVisibleTradersOffers = false;
-            offerUpdateReadyForEvaluation = false;
+            offerUpdate.reset();
+            runningMenu = null;
             waitingForOfferTicks = 0;
             EasyAutoCyclerMod.LOGGER.debug("Stopping villager trade cycling. Reason: {}", reason);
             return true;
@@ -346,73 +338,59 @@ public class AutomationManager {
     }
 
     public void clientTick() {
-        if (!isRunning.get()) return;
-
-        if (!(MinecraftScreenCompat.getScreen(Minecraft.getInstance()) instanceof MerchantScreen screen)) {
-            stop("Screen closed");
-            return;
+        if (!isRunning.get() || runningScreen() == null) return;
+        // Ticks only detect closure/timeout; successful refreshes never wait here.
+        if (offerUpdate.isPending() && ++waitingForOfferTicks >= OFFER_UPDATE_TIMEOUT_TICKS) {
+            this.sendMessageToPlayer(Component.translatable(offerUpdate.isWaitingForLockedOffers()
+                    ? "chat.easyautocycler.error.visibletraders_timeout"
+                    : "chat.easyautocycler.error.offer_timeout"));
+            stop("Merchant offers update timed out");
         }
+    }
 
-        if (waitingForOfferUpdate) {
-            if (waitingForVisibleTradersOffers) {
-                VisibleTradersCompat.OfferSets offerSets =
-                        VisibleTradersCompat.captureOffers(screen.getMenu());
-                if (offerSets.lockedOffersReady()) {
-                    finishOfferUpdateWait();
-                    return;
-                }
-            }
-            waitingForOfferTicks++;
-            if (waitingForOfferTicks >= OFFER_UPDATE_TIMEOUT_TICKS) {
-                this.sendMessageToPlayer(Component.translatable(waitingForVisibleTradersOffers
-                        ? "chat.easyautocycler.error.visibletraders_timeout"
-                        : "chat.easyautocycler.error.offer_timeout"));
-                EasyAutoCyclerMod.LOGGER.warn("No merchant-offers acknowledgement received after {} ticks", OFFER_UPDATE_TIMEOUT_TICKS);
-                stop("Merchant offers update timed out");
-            }
-            return;
+    @Nullable
+    private MerchantScreen runningScreen() {
+        Minecraft client = Minecraft.getInstance();
+        if (!(MinecraftScreenCompat.getScreen(client) instanceof MerchantScreen screen)
+                || screen.getMenu() != runningMenu || client.player == null
+                || client.player.containerMenu != runningMenu) {
+            stop("Trade menu closed or replaced");
+            return null;
         }
-
-        if (!offerUpdateReadyForEvaluation) return;
-        offerUpdateReadyForEvaluation = false;
-        evaluateAndMaybeCycle(screen);
+        return screen;
     }
 
     public void onMerchantOffersUpdated(int containerId) {
-        if (!isRunning.get() || !waitingForOfferUpdate) return;
-
-        if (!(MinecraftScreenCompat.getScreen(Minecraft.getInstance()) instanceof MerchantScreen screen)) {
-            stop("Screen closed");
-            return;
-        }
-        if (screen.getMenu().containerId != containerId) return;
-
-        waitingForOfferTicks = 0;
-        // Do not send the next cycle from inside the packet handler. The next client
-        // tick evaluates the offers that this packet has just applied, and only an
-        // unsuccessful evaluation is allowed to issue another refresh request.
-        if (requiresFutureOffers() && VisibleTradersCompat.isAvailable()) {
-            waitingForVisibleTradersOffers = true;
-            return;
-        }
-        finishOfferUpdateWait();
+        if (!isRunning.get() || !offerUpdate.isPending()) return;
+        MerchantScreen screen = runningScreen();
+        if (screen == null || screen.getMenu().containerId != containerId) return;
+        if (offerUpdate.onInitialOffers(containerId)) finishOfferUpdateWait(screen);
     }
 
-    private void finishOfferUpdateWait() {
-        waitingForOfferUpdate = false;
-        waitingForVisibleTradersOffers = false;
+
+
+    private void finishOfferUpdateWait(MerchantScreen screen) {
         waitingForOfferTicks = 0;
-        offerUpdateReadyForEvaluation = true;
+        // The last required packet has already been applied on the client thread.
+        // Evaluate before sending another request, so a match cannot be skipped.
+        evaluateAndMaybeCycle(screen);
     }
 
     private void evaluateAndMaybeCycle(MerchantScreen screen) {
-        if (!isRunning.get() || waitingForOfferUpdate) return;
+        if (!isRunning.get() || offerUpdate.isPending()) return;
+        if (!canCycleTrades(screen.getMenu())) {
+            this.sendMessageToPlayer(Component.translatable("chat.easyautocycler.error.locked")
+                    .withStyle(ChatFormatting.RED));
+            stop("Villager trades locked");
+            return;
+        }
 
-        VisibleTradersCompat.OfferSets offerSets = VisibleTradersCompat.captureOffers(screen.getMenu());
-        if (requiresFutureOffers() && VisibleTradersCompat.isAvailable()
-                && !offerSets.lockedOffersReady()) {
-            waitingForOfferUpdate = true;
-            waitingForVisibleTradersOffers = true;
+        boolean needLockedOffers = requiresFutureOffers() && VisibleTradersCompat.isAvailable();
+        VisibleTradersCompat.OfferSets offerSets = needLockedOffers
+                ? VisibleTradersCompat.captureOffers(screen.getMenu())
+                : VisibleTradersCompat.captureInitialOffers(screen.getMenu());
+        if (needLockedOffers && !offerSets.lockedOffersReady()) {
+            offerUpdate.begin(screen.getMenu().containerId, true, false);
             waitingForOfferTicks = 0;
             return;
         }
@@ -476,12 +454,11 @@ public class AutomationManager {
                 return;
             }
 
-            waitingForOfferUpdate = true;
-            waitingForVisibleTradersOffers = false;
+            offerUpdate.begin(screen.getMenu().containerId, true, false);
             waitingForOfferTicks = 0;
             currentCycles++;
             if (!sendCyclePacket()) {
-                waitingForOfferUpdate = false;
+                offerUpdate.reset();
                 this.sendMessageToPlayer(Component.translatable("chat.easyautocycler.error.network")
                         .withStyle(ChatFormatting.RED));
                 stop("Network error");

@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "librarian_trade_cycler",
-  "version": "1.8.0",
+  "version": "1.9.1",
   "name": "Villager Trade Finder",
-  "description": "Automatically cycles profession-villager trades until a configured enchanted-book or item target is found.",
+  "description": "Completes each villager trade response and checks every target before immediately requesting the next refresh.",
   "authors": [
     "CNTrident"
   ],

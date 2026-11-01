@@ -1,0 +1,22 @@
+// Opt-in, headless Fabric checks against packaged JARs (see scripts/verify_low_latency.py).
+sourceSets {
+    smoke {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+
+tasks.register('smokeJar', Jar) {
+    dependsOn smokeClasses
+    from sourceSets.smoke.output
+    archiveClassifier = 'smoke'
+    destinationDirectory = layout.buildDirectory.dir('smoke-artifacts')
+}
+
+tasks.register('writeSmokeClasspath') {
+    dependsOn smokeJar, remapJar
+    doLast {
+        def paths = sourceSets.main.runtimeClasspath.files.collect { it.absolutePath }
+        layout.buildDirectory.file('smoke-classpath.json').get().asFile.text = groovy.json.JsonOutput.toJson(paths)
+    }
+}

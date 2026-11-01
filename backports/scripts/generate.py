@@ -1,4 +1,4 @@
-"""Generate version-specific source overlays from the current 1.8.0 code.
+"""Generate version-specific source overlays from the current version code.
 
 Only this directory is generated. Latest 26.x sources are never rewritten.
 Official Mojang mapping signatures select API changes, rather than just labels.
@@ -43,6 +43,7 @@ def generate(mc):
                for p in (LATEST/'java').rglob('*.java')}
     def key(name): return str(PACKAGE/name).replace('\\','/')
     sources.pop(key('mixin/VillagerTradeAccessor.java'))
+    sources.pop(key('mixin/VisibleTradersClientMixin.java'), None)
     sources.pop(key('gui/CustomImageButton.java'))
 
     item = sources[key('gui/ItemNameResolver.java')]
@@ -93,7 +94,9 @@ def generate(mc):
         public boolean canCycle(MerchantMenu menu) { return NativeCycleCompat.canCycle(menu); }
         public boolean sendCyclePacket() { return NativeCycleCompat.cycle(); }
     }''')
-    core = core.replace('new TradeCyclingHandler()', 'new TradeCyclingHandler()')
+    core = replace_block(core, '    public void onVisibleTradersOffersUpdated(', '')
+    core = core.replace('offerUpdate.begin(screen.getMenu().containerId, false, true);', 'offerUpdate.begin(screen.getMenu().containerId, true, false);')
+    core = core.replace('offerUpdate.begin(screen.getMenu().containerId, true, needLockedOffers);', 'offerUpdate.begin(screen.getMenu().containerId, true, false);')
     core = replace_block(core, '    private boolean matchesExactItemEnchantments(', '''    private boolean matchesExactItemEnchantments(ItemStack stack, List<FilterEntry.EnchantmentTarget> targets) {
         Map<Identifier, Integer> found = StackCompat.enchantments(stack);
         if (found.size() != targets.size()) return false;
@@ -173,6 +176,23 @@ public final class MinecraftScreenCompat {
 }'''
 
     for path, text in sources.items():
+        if path.endswith('/VillagerTradeContext.java'):
+            if not block('net.minecraft.world.entity.npc.villager.Villager'):
+                text = text.replace('net.minecraft.world.entity.npc.villager.Villager', 'net.minecraft.world.entity.npc.Villager')
+            if ' profession()' not in block('net.minecraft.world.entity.npc.VillagerData') and not block('net.minecraft.world.entity.npc.villager.VillagerData'):
+                text = text.replace('boundVillager.getVillagerData().profession().unwrapKey()\n                .map(key -> key.identifier()).orElse(null)',
+                                    'net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION.getKey(\n                boundVillager.getVillagerData().getProfession())')
+        if path.endswith('/VillagerInteractionMixin.java'):
+            text = text.replace('Entity entity, EntityHitResult hit,\n                                               InteractionHand hand,',
+                                'Entity entity, InteractionHand hand,')
+            extra = '''
+    @Inject(method = "interactAt", at = @At("HEAD"))
+    private void easyautocycler$recordVillagerAt(Player player, Entity entity, EntityHitResult hit,
+                                               InteractionHand hand, CallbackInfoReturnable<InteractionResult> ci) {
+        VillagerTradeContext.recordInteraction(player, entity);
+    }
+'''
+            text = text.rstrip()[:-1] + extra + '}\n'
         text = text.replace('import com.uncraftbar.easyautocycler.compat.MinecraftApiCompat;\n', '')
         text = text.replace('MinecraftApiCompat.keyboardType()', 'InputConstants.Type.KEYSYM')
         text = text.replace('net.minecraft.client.gui.GuiGraphicsExtractor','net.minecraft.client.gui.GuiGraphics')
@@ -218,7 +238,7 @@ public final class MinecraftScreenCompat {
         dest.write_text(text,encoding='utf8')
 
     metadata = json.loads((resources/'fabric.mod.json').read_text(encoding='utf8'))
-    metadata['version'] = '1.8.0'
+    metadata['version'] = next(line.split('=',1)[1] for line in (ROOT.parent/'gradle.properties').read_text().splitlines() if line.startswith('mod_version='))
     metadata['depends']['minecraft'] = mc
     metadata['depends']['java'] = '>='+str(meta['java'])
     metadata['depends']['fabricloader'] = '>=0.16.0'
@@ -236,6 +256,7 @@ public final class MinecraftScreenCompat {
     (resources/'assets/easyautocycler/villager_trade_items.json').write_text(json.dumps(candidates,indent=2),encoding='utf8')
     mixin = json.loads((resources/'easyautocycler.mixins.json').read_text(encoding='utf8'))
     mixin['client'].remove('VillagerTradeAccessor')
+    if 'VisibleTradersClientMixin' in mixin['client']: mixin['client'].remove('VisibleTradersClientMixin')
     mixin['compatibilityLevel'] = 'JAVA_'+str(meta['java'])
     mixin['refmap'] = 'easyautocycler.refmap.json'
     (resources/'easyautocycler.mixins.json').write_text(json.dumps(mixin,indent=2),encoding='utf8')
@@ -263,6 +284,7 @@ public final class MinecraftScreenCompat {
         test = test.replace('ResourceLocation.withDefaultNamespace(', 'new ResourceLocation(')
     test = test.replace('import net.minecraft.world.item.trading.ItemCost;', '' if not components else 'import net.minecraft.world.item.trading.ItemCost;')
     (tests/'BackportChecks.java').write_text(test,encoding='utf8')
+    (tests/'OfferUpdateChecks.java').write_bytes((ROOT.parent/'src/test/java'/PACKAGE/'OfferUpdateChecks.java').read_bytes())
     print('Generated', mc, flush=True)
 
 if __name__ == '__main__':

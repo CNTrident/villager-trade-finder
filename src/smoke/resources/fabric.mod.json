@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "trade_finder_smoke",
+  "version": "1.9.0",
+  "environment": "*",
+  "entrypoints": {
+    "preLaunch": [
+      "com.uncraftbar.easyautocycler.LowLatencyMixinSmoke"
+    ]
+  }
+}

@@ -15,6 +15,7 @@ import net.minecraft.network.chat.Component;
 
 public final class ClientEventHandler {
     public static void onScreenBeforeInit(Minecraft client, Screen screen, int width, int height) {
+        VillagerTradeContext.onScreenBeforeInit(screen);
         if (!(screen instanceof MerchantScreen) || !AutomationManager.INSTANCE.isSupportedVillagerTradeScreen(screen)) return;
         ScreenKeyboardEvents.beforeKeyPress(screen).register((s, keyCode, scanCode, modifiers) -> {
             var key=KeyBindingHelper.getBoundKeyOf(Keybindings.toggleAutoTradeKey);

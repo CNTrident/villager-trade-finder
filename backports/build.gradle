@@ -3,7 +3,9 @@ plugins { id 'fabric-loom' version '1.17.0-alpha.5' }
 def mc = providers.gradleProperty('mc').getOrElse('1.21.11')
 def entry = new groovy.json.JsonSlurper().parse(file('matrix.json')).find { it.minecraft == mc }
 if (entry == null) throw new GradleException("Unresolved Minecraft version ${mc}")
-version = '1.8.0'
+def projectVersion = new Properties()
+file('../gradle.properties').withInputStream { projectVersion.load(it) }
+version = projectVersion.getProperty('mod_version')
 group = 'com.uncraftbar.easyautocycler'
 base { archivesName = "villager_trade_finder-fabric-${mc}" }
 layout.buildDirectory = file("build/${mc}")
@@ -32,7 +34,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 loom { mixin { useLegacyMixinAp = true; defaultRefmapName = 'easyautocycler.refmap.json' } }
 jar { from('../LICENSE') }
-test { exclude '**/BackportChecks*.class' }
+test { exclude '**/BackportChecks*.class', '**/OfferUpdateChecks*.class' }
 tasks.register('verifyBackport', JavaExec) {
     dependsOn testClasses
     classpath = sourceSets.test.runtimeClasspath
@@ -41,4 +43,10 @@ tasks.register('verifyBackport', JavaExec) {
     workingDir = layout.buildDirectory.dir('checks').get().asFile
     doFirst { workingDir.mkdirs() }
 }
-check.dependsOn verifyBackport
+tasks.register('verifyOfferUpdates', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.uncraftbar.easyautocycler.OfferUpdateChecks'
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
+}
+check.dependsOn verifyBackport, verifyOfferUpdates

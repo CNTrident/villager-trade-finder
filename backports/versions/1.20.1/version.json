@@ -1,13 +1,13 @@
 {
   "minecraft": "1.20.1",
-  "mod_version": "1.8.0",
+  "mod_version": "1.9.1",
   "java": 17,
   "fabric_api": "0.92.12+1.20.1",
-  "jar": "villager_trade_finder-fabric-1.20.1-1.8.0.jar",
-  "sha256": "f881cbe5c860333cfc4da8ccba58d08faaf7f3ee710078ed7b2a5c15d6447f8d",
-  "bytes": 103854,
-  "sources": "villager_trade_finder-fabric-1.20.1-1.8.0-sources.jar",
-  "source_directory": "backports/versions/1.20.1",
+  "jar": "villager_trade_finder-fabric-1.20.1-1.9.1.jar",
+  "sha256": "055dd538d7cbd14c75dfb9269d5b501222e31b30a49cec3133bb893d683805c5",
+  "bytes": 107893,
+  "sources": "villager_trade_finder-fabric-1.20.1-1.9.1-sources.jar",
+  "source_directory": "backports\\versions\\1.20.1",
   "trade_cycling": {
     "version": "fabric-1.20.1-1.0.18",
     "game_versions": [
@@ -28,5 +28,6 @@
     "page": "https://modrinth.com/mod/visible-traders/version/9CopIc96",
     "download": "https://cdn.modrinth.com/data/AhllI99f/versions/9CopIc96/VisibleTraders-0.0.4.jar"
   },
-  "checks": "compile, remap, headless matching/configuration regression checks; no in-game testing"
+  "checks": "Gradle build and matching/configuration/offer-update regressions passed; packaged entity-context/Fabric checks on 26.2; no manual in-game test",
+  "sources_sha256": "fc98920e49a863957322b46901cdab6e0c5727785b06dcbd6715a9a9e63497f0"
 }

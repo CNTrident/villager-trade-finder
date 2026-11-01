@@ -44,9 +44,14 @@ release = api(BASE + '/releases/' + str(release['id']), 'PATCH', release_fields)
 existing = {a['name']: a for a in release['assets']}
 files = sorted(p for p in args.dist.iterdir() if p.is_file())
 rows = json.loads((args.dist / 'version-manifest.json').read_text(encoding='utf8'))
-assert len(files) == len(rows) * 2 + 3
+assert len(files) == len(rows) * 2 + 3 + int((args.dist / 'README.txt').is_file())
 for row in rows:
     assert hashlib.sha256((args.dist / row['jar']).read_bytes()).hexdigest() == row['sha256']
+    if 'sources_sha256' in row:
+        assert hashlib.sha256((args.dist / row['sources']).read_bytes()).hexdigest() == row['sources_sha256']
+for line in (args.dist / 'SHA256SUMS.txt').read_text(encoding='utf8').splitlines():
+    expected, filename = line.split('  ', 1)
+    assert hashlib.sha256((args.dist / filename).read_bytes()).hexdigest() == expected
 upload = release['upload_url'].split('{', 1)[0]
 def upload_one(path):
     payload = path.read_bytes()

@@ -58,11 +58,11 @@ dependencies {
 processResources {
     inputs.property 'version', mod_version
     inputs.property 'minecraft_version', minecraft_version
-    inputs.property 'fabricloader_min', minecraft_version == '26.3' ? '0.19.3' : '0.18.6'
+    inputs.property 'fabricloader_min', fabric_loader_version
 
     filesMatching('fabric.mod.json') {
         expand 'version': mod_version, 'minecraft_version': minecraft_version,
-                'fabricloader_min': minecraft_version == '26.3' ? '0.19.3' : '0.18.6'
+                'fabricloader_min': fabric_loader_version
     }
 }
 
@@ -82,10 +82,21 @@ tasks.register('verifyPotionArrows', JavaExec) {
 
 // This headless harness is executed by JavaExec, not a JUnit test engine.
 test {
-    exclude '**/PotionArrowChecks*.class'
+    exclude '**/PotionArrowChecks*.class', '**/OfferUpdateChecks*.class'
 }
 
-check.dependsOn verifyPotionArrows
+tasks.register('verifyOfferUpdates', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.uncraftbar.easyautocycler.OfferUpdateChecks'
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
+}
+
+check.dependsOn verifyPotionArrows, verifyOfferUpdates
+
+if (providers.gradleProperty('lowLatencySmoke').isPresent()) {
+    apply from: 'smoke.gradle'
+}
 
 jar {
     from('LICENSE') {

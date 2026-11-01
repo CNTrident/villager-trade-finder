@@ -15,13 +15,16 @@ public final class VisibleTradersCompat {
         if(initialized)return;initialized=true;
         if(!FabricLoader.getInstance().isModLoaded("visibletraders"))return;
         for(String name : new String[]{"net.ramixin.visibletraders.ducks.MerchantMenuDuck",
-                "net.ramgames.visibletraders.MerchantMenuDuck"}) {
+                "net.ramgames.visibletraders.MerchantMenuDuck",
+                "net.ramgames.visibletraders.ducks.MerchantMenuDuck"}) {
             try { shouldAllowTrade=Class.forName(name).getMethod("visibleTraders$shouldAllowTrade",int.class);return; }
             catch(ReflectiveOperationException ignored) {}
         }
         EasyAutoCyclerMod.LOGGER.warn("Unsupported VisibleTraders menu API; future-trade matching is disabled");
     }
     public static boolean isAvailable(){return shouldAllowTrade!=null;}
+    // Legacy VisibleTraders returns initial and future offers in ONE vanilla packet.
+    public static OfferSets captureInitialOffers(MerchantMenu menu) { return captureOffers(menu); }
     public static OfferSets captureOffers(MerchantMenu menu) {
         MerchantOffers all=copy(menu.getOffers());
         if(!isAvailable())return new OfferSets(all,new MerchantOffers(),all,false);

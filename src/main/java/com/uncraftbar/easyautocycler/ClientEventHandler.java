@@ -31,6 +31,7 @@ public class ClientEventHandler {
      * focus, so we hook the screen's key-press event directly.
      */
     public static void onScreenBeforeInit(Minecraft client, Screen screen, int scaledWidth, int scaledHeight) {
+        VillagerTradeContext.onScreenBeforeInit(screen);
         if (!(screen instanceof MerchantScreen)
                 || !AutomationManager.INSTANCE.isSupportedVillagerTradeScreen(screen)) return;
 

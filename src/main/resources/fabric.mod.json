@@ -3,7 +3,7 @@
   "id": "librarian_trade_cycler",
   "version": "${version}",
   "name": "Villager Trade Finder",
-  "description": "Automatically cycles profession-villager trades until a configured enchanted-book or item target is found.",
+  "description": "Completes each villager trade response and checks every target before immediately requesting the next refresh.",
   "authors": [
     "CNTrident"
   ],
@@ -29,11 +29,7 @@
     "fabricloader": ">=${fabricloader_min}",
     "minecraft": "${minecraft_version}",
     "java": ">=25",
-    "fabric-api-base": "*",
-    "fabric-key-mapping-api-v1": "*",
-    "fabric-networking-api-v1": "*",
-    "fabric-resource-loader-v0": "*",
-    "fabric-screen-api-v1": "*",
+    "fabric-api": "*",
     "trade_cycling": ">=1.0.21"
   },
   "suggests": {

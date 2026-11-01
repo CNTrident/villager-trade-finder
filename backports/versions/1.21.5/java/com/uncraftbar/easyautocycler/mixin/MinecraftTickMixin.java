@@ -14,6 +14,7 @@ public class MinecraftTickMixin {
     @Inject(method = "tick", at = @At("TAIL"))
     private void easyautocycler$onClientTick(CallbackInfo ci) {
         Minecraft client = (Minecraft) (Object) this;
+        com.uncraftbar.easyautocycler.VillagerTradeContext.clientTick();
         if (AutomationManager.INSTANCE.isRunning()) {
             AutomationManager.INSTANCE.clientTick();
         }
