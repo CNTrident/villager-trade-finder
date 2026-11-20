@@ -16,9 +16,7 @@ public class MinecraftTickMixin {
     private void easyautocycler$onClientTick(CallbackInfo ci) {
         Minecraft client = (Minecraft) (Object) this;
         VillagerTradeContext.clientTick();
-        if (AutomationManager.INSTANCE.isRunning()) {
-            AutomationManager.INSTANCE.clientTick();
-        }
+        AutomationManager.INSTANCE.clientTick();
         InputHandler.onClientTick(client);
     }
 }

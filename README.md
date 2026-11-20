@@ -12,11 +12,11 @@
 
 ## 下载
 
-当前版本 **1.9.1**，覆盖 Minecraft 1.20～1.21.11 和 26.1～26.3 共 24 个正式版本。
+当前源码版本 **1.9.2**，覆盖 Minecraft 1.20～1.21.11 和 26.1～26.3 共 24 个正式版本。
 
-- [全部 24 版本安装包合集](https://github.com/CNTrident/villager-trade-finder/releases/download/v1.9.1/all-24-installers-1.9.1.zip)
-- [逐版安装 JAR、源码 JAR、版本清单与 SHA-256](https://github.com/CNTrident/villager-trade-finder/releases/tag/v1.9.1)
-- 成品名称：`villager_trade_finder-fabric-<Minecraft版本>-1.9.1.jar`。例如 26.2 使用 `villager_trade_finder-fabric-26.2-1.9.1.jar`，不要跨版本混装。
+- [1.9.1 历史安装包合集](https://github.com/CNTrident/villager-trade-finder/releases/download/v1.9.1/all-24-installers-1.9.1.zip)
+- [1.9.1 历史逐版安装 JAR、源码 JAR 与 SHA-256](https://github.com/CNTrident/villager-trade-finder/releases/tag/v1.9.1)
+- 1.9.2 可按下文构建。成品命名为 `villager_trade_finder-fabric-<Minecraft版本>-1.9.2.jar`，安装时选择对应游戏版本的一份 JAR。
 - [更新记录](VERSION_HISTORY.md)。历史已发布版本保留在 [GitHub Releases](https://github.com/CNTrident/villager-trade-finder/releases)。
 
 1.20～1.21.11 的源码位于 [`backports/versions/`](backports/versions/)，26.x 使用根目录源码与 [`mc26-matrix.json`](mc26-matrix.json) 中的对应兼容目录。源码 ZIP 不用于安装。
@@ -39,7 +39,7 @@
 - 新目标输入框使用示例提示；附魔等级和价格会按所选附魔及原版交易范围自动限制。
 - 每个目标可设置附魔名称、精确等级、最低和最高原始绿宝石价格。
 - 价格使用 `MerchantOffer#getBaseCostA()`，不计入治愈/声望/村庄英雄折扣，也不计入需求涨价。
-- 每次只保留一个未完成刷新请求；本轮交易生成、完整回包与筛选全部完成且未命中后，立即请求下一次，不额外等待 tick 或毫秒冷却。
+- 每次只保留一个未完成刷新请求。等本轮交易数据到齐，并在至少 50 毫秒没有新交易回包后再判断。未命中时开始下一轮。
 - 筛选后续交易时，VisibleTraders 的清空占位包不算完成；必须等真正的后续数据到齐才判断。找到目标后停止，不发送下一次刷新请求。
 - 交易已锁定、服务端不支持、没有目标、网络响应超时或达到 1000000 次安全上限时自动停止。
 - 内置简体中文和英文界面。
@@ -77,7 +77,7 @@ Villager Trade Finder 仅安装在客户端。多人服务器需要 Trade Cyclin
    - 原始价格：`10` 到 `20`
    - 可附魔物品可填写多个附魔，例如：`耐久, 经验修补`，等级填写：`3, 1`
 3. 保存后按 `R` 或点击播放按钮开始。
-4. 找到目标后会自动停止并播放提示音；再次按 `R` 可手动停止。
+4. 找到目标后会自动停止并播放提示音；再次按 `R` 可手动停止。快速停止后重启时，会先处理同一窗口上次已经发出的刷新请求。
 
 `C`、`R` 均可在 Minecraft 的按键设置中修改。配置保存在
 `config/easyautocycler-filters.json`。
@@ -104,7 +104,7 @@ python scripts/build_all_versions.py
 python scripts/verify_low_latency.py --java "Java25/bin/java.exe" --visible-traders "Visible Traders-2.5.1-universal.jar"
 ```
 
-26.x 产物位于 `build/libs/`，旧版本位于 `backports/build/<Minecraft版本>/libs/`。全版本检查日志保留在 `build/matrix-1.9.1/`。构建脚本默认使用本地依赖缓存；首次下载依赖时添加 `--online`。26.x 参数见 [`mc26-matrix.json`](mc26-matrix.json)，旧版参数见 [`backports/matrix.json`](backports/matrix.json)。
+26.x 产物位于 `build/libs/`，旧版本位于 `backports/build/<Minecraft版本>/libs/`。全版本检查日志保留在 `build/matrix-1.9.2/`。构建脚本默认使用本地依赖缓存；首次下载依赖时添加 `--online`。26.x 参数见 [`mc26-matrix.json`](mc26-matrix.json)，旧版参数见 [`backports/matrix.json`](backports/matrix.json)。
 
 ## 开源来源与许可
 

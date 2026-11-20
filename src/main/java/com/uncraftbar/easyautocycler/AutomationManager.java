@@ -327,9 +327,10 @@ public class AutomationManager {
         if (isRunning.compareAndSet(false, true)) {
             EasyAutoCyclerMod.LOGGER.debug("Starting network-synchronized villager trade cycling.");
             this.sendMessageToPlayer(Component.translatable("chat.easyautocycler.started"));
-            this.offerUpdate.reset();
-            this.runningMenu = merchantScreen.getMenu();
-            this.waitingForOfferTicks = 0;
+            if (runningMenu != merchantScreen.getMenu()) {
+                clearTrackedMenu();
+                runningMenu = merchantScreen.getMenu();
+            }
             this.currentCycles = 0;
             this.lastMatchedFilter = null;
             this.lastMatchedFilters.clear();
@@ -342,61 +343,67 @@ public class AutomationManager {
     }
 
     private boolean stopInternal(String reason) {
-        if (isRunning.compareAndSet(true, false)) {
-            offerUpdate.reset();
-            runningMenu = null;
-            waitingForOfferTicks = 0;
-            EasyAutoCyclerMod.LOGGER.debug("Stopping villager trade cycling. Reason: {}", reason);
-            return true;
-        }
-        return false;
+        if (!isRunning.compareAndSet(true, false)) return false;
+        // A sent request can still update this menu after a manual stop.
+        if (!offerUpdate.isPending()) clearTrackedMenu();
+        EasyAutoCyclerMod.LOGGER.debug("Stopping villager trade cycling. Reason: {}", reason);
+        return true;
+    }
+
+    private void clearTrackedMenu() {
+        offerUpdate.reset();
+        runningMenu = null;
+        waitingForOfferTicks = 0;
     }
 
     public void clientTick() {
-        if (!isRunning.get() || runningScreen() == null) return;
-        // Ticks only detect closure/timeout; successful refreshes never wait here.
-        if (offerUpdate.isPending() && ++waitingForOfferTicks >= OFFER_UPDATE_TIMEOUT_TICKS) {
-            this.sendMessageToPlayer(Component.translatable(offerUpdate.isWaitingForLockedOffers()
-                    ? "chat.easyautocycler.error.visibletraders_timeout"
-                    : "chat.easyautocycler.error.offer_timeout"));
+        if (runningMenu == null) return;
+        Minecraft client = Minecraft.getInstance();
+        if (client.player == null || client.player.containerMenu != runningMenu) {
+            clearTrackedMenu();
+            stop("Trade menu closed or replaced");
+            return;
+        }
+
+        Screen currentScreen = MinecraftScreenCompat.getScreen(client);
+        if (!(currentScreen instanceof MerchantScreen screen) || screen.getMenu() != runningMenu) {
+            stop("Trade screen closed or replaced");
+        }
+        if (!offerUpdate.isPending()) return;
+
+        if (offerUpdate.finishIfSettled(System.nanoTime())) {
+            waitingForOfferTicks = 0;
+            if (isRunning.get() && currentScreen instanceof MerchantScreen screen) {
+                evaluateAndMaybeCycle(screen);
+            } else {
+                clearTrackedMenu();
+            }
+        } else if (++waitingForOfferTicks >= OFFER_UPDATE_TIMEOUT_TICKS) {
+            if (isRunning.get()) {
+                this.sendMessageToPlayer(Component.translatable(offerUpdate.isWaitingForLockedOffers()
+                        ? "chat.easyautocycler.error.visibletraders_timeout"
+                        : "chat.easyautocycler.error.offer_timeout"));
+            }
+            clearTrackedMenu();
             stop("Merchant offers update timed out");
         }
     }
 
-    @Nullable
-    private MerchantScreen runningScreen() {
-        Minecraft client = Minecraft.getInstance();
-        if (!(MinecraftScreenCompat.getScreen(client) instanceof MerchantScreen screen)
-                || screen.getMenu() != runningMenu || client.player == null
-                || client.player.containerMenu != runningMenu) {
-            stop("Trade menu closed or replaced");
-            return null;
-        }
-        return screen;
-    }
-
     public void onMerchantOffersUpdated(int containerId) {
-        if (!isRunning.get() || !offerUpdate.isPending()) return;
-        MerchantScreen screen = runningScreen();
-        if (screen == null || screen.getMenu().containerId != containerId) return;
-        if (offerUpdate.onInitialOffers(containerId)) finishOfferUpdateWait(screen);
+        var player = Minecraft.getInstance().player;
+        if (runningMenu != null && player != null && player.containerMenu == runningMenu) {
+            offerUpdate.onInitialOffers(containerId, System.nanoTime());
+        }
     }
 
     public void onVisibleTradersOffersUpdated(Object payload) {
-        if (!(MinecraftScreenCompat.getScreen(Minecraft.getInstance()) instanceof MerchantScreen screen)) return;
+        Minecraft client = Minecraft.getInstance();
+        if (!(MinecraftScreenCompat.getScreen(client) instanceof MerchantScreen screen)
+                || client.player == null || client.player.containerMenu != screen.getMenu()) return;
         boolean complete = VisibleTradersCompat.recordLockedOffers(screen.getMenu(), payload);
-        if (!isRunning.get() || !offerUpdate.isPending()) return;
-        if (runningScreen() == screen
-                && offerUpdate.onLockedOffers(screen.getMenu().containerId, complete)) {
-            finishOfferUpdateWait(screen);
+        if (screen.getMenu() == runningMenu) {
+            offerUpdate.onLockedOffers(runningMenu.containerId, complete, System.nanoTime());
         }
-    }
-
-    private void finishOfferUpdateWait(MerchantScreen screen) {
-        waitingForOfferTicks = 0;
-        // The last required packet has already been applied on the client thread.
-        // Evaluate before sending another request, so a match cannot be skipped.
-        evaluateAndMaybeCycle(screen);
     }
 
     private void evaluateAndMaybeCycle(MerchantScreen screen) {

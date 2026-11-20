@@ -1,14 +1,15 @@
-# Villager Trade Finder 1.9.1 validation
+# Villager Trade Finder 1.9.2 validation
 
-Validated on 2026-11-01. The maintained matrix contains 24 Minecraft versions: 1.20 through 1.21.11, plus 26.1, 26.1.1, 26.1.2, 26.2 and 26.3.
+Validated on 2026-11-20. The [version manifest](release-manifests/1.9.2.json) lists 24 Minecraft versions and the SHA-256 of every installer and source JAR.
 
-- All 24 Gradle builds passed, including the existing matching, configuration, potion, bilingual candidate and offer-response checks appropriate to each version.
-- The packaged 26.2 mod passed real Fabric Loader / Mixin checks for client and dedicated-server environments, with and without VisibleTraders. The client-only mod was excluded on the dedicated server.
-- New 26.2 checks exercised the transformed interaction handler, custom and empty merchant titles, misleading profession titles, synchronized entity professions, excluded professions, configuration return, menu replacement, expired interaction, disconnect and world changes.
-- The complete-response regression used a custom-named toolsmith and real vanilla / VisibleTraders handlers in three packet orders. A delayed Unbreaking III match stopped without another refresh request.
-- All 43 class files in the delivered 26.2 JAR are identical to those loaded by the packaged regression checks.
-- Every installer, source archive and installation bundle has a SHA-256 checksum. The version manifest records the per-version installer and source hashes.
+- All 24 Gradle builds passed, including the matching, configuration, and offer-response checks. The shared response checks cover duplicate packets in a burst, a burst split across client ticks, rapid catch-up ticks, incorrect menu IDs, and the ordering of initial and locked offers.
+- A real Fabric 26.3 client and integrated server ran the final installer with Trade Cycling 1.0.23+26.3 and Fabric API 0.163.0+26.3. Three Mending runs made 135 refresh requests and received 405 offer packets. The client sent zero additional requests after a hit. The villager kept the matching trade while the menu remained open and after reopening it.
+- A 26.3 start, stop, and restart in the same client tick left exactly one request in flight. The restarted run accepted its settled reply and retained the matching bookshelf trade.
+- The same 26.3 installer also passed on a separate Fabric dedicated server over loopback TCP. Only Trade Cycling, Fabric API, and a fixture that spawns the test villager were on the server. The client made 66 refresh requests, received 198 offer packets, sent zero requests after the Mending hit, and retained the trade after reopening.
+- Fabric/Mixin checks on 26.2 passed with and without VisibleTraders on the client and dedicated server. The real packet handlers passed the initial, locked, and all-offer scopes, including a three-packet initial burst, the locked-offer clear marker, both packet orders, and the same-menu restart. The dedicated server excluded the client-only installer.
 
-These are automated build and headless runtime checks. No manual test in a real singleplayer save or multiplayer world was performed. The new entity-association runtime scenarios were executed on 26.2; the other maintained versions passed compilation, remapping and their existing regressions.
+The 26.3 gameplay checks used temporary singleplayer and dedicated-server worlds. The TCP test used loopback, with no WAN latency simulation. The other versions were built and checked automatically. The local 26.3 installer is byte-identical to the installer tested in the game.
 
-The documentation and publishing revision does not change the installer, source-archive or bundle bytes. Historical releases remain available.
+Temporary diagnostics used the system clock to test the 50 ms quiet window without slowing or intercepting the game's refresh requests. The packet format does not provide a request identifier.
+
+The earlier 1.9.1 results remain in the history for [v1.9.1](https://github.com/CNTrident/villager-trade-finder/tree/v1.9.1).

@@ -98,28 +98,37 @@ final class ClientTradeReadinessSmoke {
             manager.setFilterEntries(id("toolsmith"), List.of(filter));
             manager.setMatchAny(id("toolsmith"), false);
 
-            for (int order = 0; order < 3; order++) {
-                menu.setOffers(initial);
-                handle.invoke(null, payload.newInstance(Optional.of(miss)));
-                int before = connection.requests;
-                manager.toggle();
-                require(manager.isRunning() && connection.requests == before + 1, "first request is sent once");
-                if (order == 1) listener.handleMerchantOffers(initialPacket(initial));
-                handle.invoke(null, payload.newInstance(Optional.empty()));
-                require(manager.isRunning() && connection.requests == before + 1,
-                        "clear marker must never trigger another refresh");
-                if (order == 0) listener.handleMerchantOffers(initialPacket(initial));
-                require(manager.isRunning() && connection.requests == before + 1,
-                        "initial plus clear must wait for generated future trades");
-                handle.invoke(null, payload.newInstance(Optional.of(hit)));
-                if (order == 2) {
+            for (var scope : List.of(FilterEntry.TradeScope.LATER, FilterEntry.TradeScope.ALL)) {
+                filter.setTradeScope(scope);
+                manager.setFilterEntries(id("toolsmith"), List.of(filter));
+                for (int order = 0; order < 3; order++) {
+                    menu.setOffers(initial);
+                    handle.invoke(null, payload.newInstance(Optional.of(miss)));
+                    int before = connection.requests;
+                    manager.toggle();
+                    require(manager.isRunning() && connection.requests == before + 1, "first request is sent once");
+                    if (order == 1) listener.handleMerchantOffers(initialPacket(initial));
+                    handle.invoke(null, payload.newInstance(Optional.empty()));
                     require(manager.isRunning() && connection.requests == before + 1,
-                            "locked-first hit waits for its matching initial packet");
-                    listener.handleMerchantOffers(initialPacket(initial));
+                            "clear marker must never trigger another refresh");
+                    if (order == 0) listener.handleMerchantOffers(initialPacket(initial));
+                    require(manager.isRunning() && connection.requests == before + 1,
+                            "initial plus clear must wait for generated future trades");
+                    handle.invoke(null, payload.newInstance(Optional.of(hit)));
+                    if (order == 2) {
+                        require(manager.isRunning() && connection.requests == before + 1,
+                                "locked-first hit waits for its matching initial packet");
+                        listener.handleMerchantOffers(initialPacket(initial));
+                    }
+                    require(manager.isRunning() && connection.requests == before + 1,
+                            "receiving the last required packet must leave time for the rest of its burst");
+                    settle(manager);
+                    require(!manager.isRunning() && connection.requests == before + 1,
+                            "Unbreaking III pickaxe must stop without sending the next request");
                 }
-                require(!manager.isRunning() && connection.requests == before + 1,
-                        "Unbreaking III pickaxe must STOP without sending the next request");
             }
+            filter.setTradeScope(FilterEntry.TradeScope.LATER);
+            manager.setFilterEntries(id("toolsmith"), List.of(filter));
             menu.setOffers(initial);
             handle.invoke(null, payload.newInstance(Optional.of(miss)));
             int before = connection.requests;
@@ -127,15 +136,56 @@ final class ClientTradeReadinessSmoke {
             handle.invoke(null, payload.newInstance(Optional.empty()));
             listener.handleMerchantOffers(initialPacket(initial));
             handle.invoke(null, payload.newInstance(Optional.of(miss)));
+            settle(manager);
             require(manager.isRunning() && connection.requests == before + 2,
                     "actual non-matching completed response sends exactly one next request");
-            manager.stop("readiness regression complete");
-            System.out.println("CLIENT TRADE READINESS PASSED: real handlers, 3 packet orders, delayed Unbreaking III hit stops with zero extra refreshes");
+
+            manager.toggle();
+            manager.toggle();
+            require(manager.isRunning() && connection.requests == before + 2,
+                    "restarting in the same menu keeps the previous request in flight");
+            handle.invoke(null, payload.newInstance(Optional.empty()));
+            listener.handleMerchantOffers(initialPacket(initial));
+            handle.invoke(null, payload.newInstance(Optional.of(hit)));
+            settle(manager);
+            require(!manager.isRunning() && connection.requests == before + 2,
+                    "the outstanding round can safely satisfy the restarted run");
+
+            filter.setTradeScope(FilterEntry.TradeScope.INITIAL);
+            manager.setFilterEntries(id("toolsmith"), List.of(filter));
+            int start = connection.requests;
+            manager.toggle();
+            require(manager.isRunning() && connection.requests == start + 1, "send the first initial-only request");
+            listener.handleMerchantOffers(initialPacket(miss));
+            listener.handleMerchantOffers(initialPacket(miss));
+            manager.clientTick();
+            listener.handleMerchantOffers(initialPacket(miss));
+            manager.clientTick();
+            require(connection.requests == start + 1, "no new request halfway through the three-packet burst");
+            settle(manager);
+            require(connection.requests == start + 2, "one new request after the whole burst settles");
+            listener.handleMerchantOffers(initialPacket(hit));
+            listener.handleMerchantOffers(initialPacket(hit));
+            listener.handleMerchantOffers(initialPacket(hit));
+            settle(manager);
+            require(!manager.isRunning() && connection.requests == start + 2,
+                    "the three-packet hit stops without a request in flight");
+            System.out.println("CLIENT TRADE READINESS PASSED: real handlers, initial/locked/all scopes, duplicate burst, restart, and zero extra refreshes after a match");
         } finally {
             VillagerTradeContext.clear();
             manager.stop("readiness cleanup");
+            Minecraft current = Minecraft.getInstance();
+            if (current != null && current != previousClient && current.player != null) {
+                current.player.containerMenu = null;
+                manager.clientTick();
+            }
             set(Minecraft.class, null, "instance", previousClient);
         }
+    }
+
+    private static void settle(AutomationManager manager) throws InterruptedException {
+        Thread.sleep(60);
+        manager.clientTick();
     }
 
     private static ClientboundMerchantOffersPacket initialPacket(MerchantOffers offers) {

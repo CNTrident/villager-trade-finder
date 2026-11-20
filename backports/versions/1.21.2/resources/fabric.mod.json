@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "librarian_trade_cycler",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "name": "Villager Trade Finder",
   "description": "Completes each villager trade response and checks every target before immediately requesting the next refresh.",
   "authors": [
