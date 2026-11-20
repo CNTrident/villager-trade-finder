@@ -5,7 +5,7 @@ def entry = new groovy.json.JsonSlurper().parse(file('matrix.json')).find { it.m
 if (entry == null) throw new GradleException("Unresolved Minecraft version ${mc}")
 def projectVersion = new Properties()
 file('../gradle.properties').withInputStream { projectVersion.load(it) }
-version = projectVersion.getProperty('mod_version')
+version = projectVersion.getProperty('backport_mod_version', projectVersion.getProperty('mod_version'))
 group = 'com.uncraftbar.easyautocycler'
 base { archivesName = "villager_trade_finder-fabric-${mc}" }
 layout.buildDirectory = file("build/${mc}")

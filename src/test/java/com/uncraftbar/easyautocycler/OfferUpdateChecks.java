@@ -53,7 +53,38 @@ public final class OfferUpdateChecks {
         state.onInitialOffers(7, 851 * MILLIS);
         require(!state.finishIfSettled(950 * MILLIS) && !state.isPending(),
                 "menu replacement discards the old response");
-        System.out.println("OFFER UPDATE CHECKS PASSED: duplicate bursts, catch-up ticks, menu, and locked offers");
+
+        state.begin(7, true, false, 21);
+        state.onInitialOffers(7, 1_000 * MILLIS);
+        state.onConfirmation(7, 20);
+        state.onConfirmation(8, 21);
+        require(!state.finishIfSettled(2_000 * MILLIS) && !state.finishIfConfirmed(),
+                "no quiet period, old round, or wrong menu can complete a confirmed request");
+        state.onConfirmation(7, 21);
+        require(state.finishIfConfirmed(), "the matching round finishes immediately");
+        state.begin(7, true, false, 22);
+        state.onInitialOffers(7, 2_000 * MILLIS);
+        state.onConfirmation(7, 21);
+        require(!state.finishIfConfirmed(), "late results cannot affect an active round in the same menu");
+        state.onConfirmation(7, 22);
+        require(state.finishIfConfirmed(), "identical offers in consecutive confirmed rounds count independently");
+
+        state.begin(7, true, true, 23);
+        state.onInitialOffers(7, 2_100 * MILLIS);
+        state.onConfirmation(7, 23);
+        state.onLockedOffers(7, false, 2_101 * MILLIS);
+        require(!state.expectsConfirmation(7, 23) && !state.finishIfConfirmed(),
+                "duplicate confirmations are ignored while locked data is still being generated");
+        state.onLockedOffers(7, true, 2_200 * MILLIS);
+        require(state.finishIfConfirmed(), "required locked data can complete a numbered round immediately");
+
+        state.begin(7, true, true, 24);
+        state.onLockedOffers(7, true, 2_300 * MILLIS);
+        require(!state.finishIfConfirmed(), "locked data alone cannot complete a numbered round");
+        state.onInitialOffers(7, 2_301 * MILLIS);
+        state.onConfirmation(7, 24);
+        require(state.finishIfConfirmed(), "numbered initial data can arrive after locked data");
+        System.out.println("OFFER UPDATE CHECKS PASSED: numbered replies, duplicate bursts, catch-up ticks, menu, and locked offers");
     }
 
     private static void require(boolean condition, String message) {

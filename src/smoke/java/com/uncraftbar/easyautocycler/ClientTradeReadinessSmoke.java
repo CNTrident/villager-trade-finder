@@ -1,7 +1,9 @@
 package com.uncraftbar.easyautocycler;
 
 import com.mojang.serialization.Lifecycle;
+import com.uncraftbar.easyautocycler.compat.VisibleTradersCompat;
 import com.uncraftbar.easyautocycler.filter.FilterEntry;
+import com.uncraftbar.easyautocycler.network.ConfirmedCycleOffers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.screens.Screen;
@@ -170,7 +172,41 @@ final class ClientTradeReadinessSmoke {
             settle(manager);
             require(!manager.isRunning() && connection.requests == start + 2,
                     "the three-packet hit stops without a request in flight");
-            System.out.println("CLIENT TRADE READINESS PASSED: real handlers, initial/locked/all scopes, duplicate burst, restart, and zero extra refreshes after a match");
+
+            Field updateField = AutomationManager.class.getDeclaredField("offerUpdate");
+            updateField.setAccessible(true);
+            OfferUpdateState update = (OfferUpdateState) updateField.get(manager);
+            for (var scope : FilterEntry.TradeScope.values()) {
+                filter.setTradeScope(scope);
+                manager.setFilterEntries(id("toolsmith"), List.of(filter));
+                menu.setOffers(initial);
+                handle.invoke(null, payload.newInstance(Optional.of(miss)));
+                int requestsBeforeConfirmation = connection.requests;
+                manager.toggle();
+                require(manager.isRunning() && connection.requests == requestsBeforeConfirmation + 1,
+                        "each fixture begins with one request");
+
+                long round = 100 + scope.ordinal();
+                update.reset();
+                update.begin(7, true, scope != FilterEntry.TradeScope.INITIAL, round);
+                manager.onConfirmedOffers(new ConfirmedCycleOffers(round - 1, initialPacket(hit)), listener);
+                require(VisibleTradersCompat.captureInitialOffers(menu).initial().getFirst().getResult().is(Items.COAL),
+                        "stale replies cannot replace the current quote");
+                if (scope == FilterEntry.TradeScope.ALL) {
+                    handle.invoke(null, payload.newInstance(Optional.of(hit)));
+                    require(manager.isRunning(), "locked-first data needs the matching numbered initial response");
+                }
+                MerchantOffers confirmedOffers = scope == FilterEntry.TradeScope.INITIAL ? hit : initial;
+                manager.onConfirmedOffers(new ConfirmedCycleOffers(round, initialPacket(confirmedOffers)), listener);
+                if (scope == FilterEntry.TradeScope.LATER) {
+                    handle.invoke(null, payload.newInstance(Optional.empty()));
+                    require(manager.isRunning(), "numbered initial data cannot substitute for generated locked trades");
+                    handle.invoke(null, payload.newInstance(Optional.of(hit)));
+                }
+                require(!manager.isRunning() && connection.requests == requestsBeforeConfirmation + 1,
+                        "a complete numbered match must stop immediately in every scope");
+            }
+            System.out.println("CLIENT TRADE READINESS PASSED: fallback bursts and numbered replies in initial, locked, and all scopes");
         } finally {
             VillagerTradeContext.clear();
             manager.stop("readiness cleanup");

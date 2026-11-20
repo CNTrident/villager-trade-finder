@@ -14,14 +14,16 @@ parser.add_argument('--only', help='Comma-separated Minecraft versions')
 parser.add_argument('--online', action='store_true')
 args = parser.parse_args()
 selected = set(args.only.split(',')) if args.only else None
-version = next(x.split('=', 1)[1] for x in (ROOT / 'gradle.properties').read_text().splitlines()
-               if x.startswith('mod_version='))
+properties = dict(line.split('=', 1) for line in (ROOT / 'gradle.properties').read_text().splitlines()
+                  if '=' in line and not line.lstrip().startswith('#'))
+version = properties['mod_version']
 output = ROOT / 'build' / ('matrix-' + version)
 output.mkdir(parents=True, exist_ok=True)
 lock = threading.Lock()
 report = []
 
 def build_group(rows, backport):
+    group_version = properties.get('backport_mod_version', version) if backport else version
     for entry in rows:
         mc = entry['minecraft']
         if selected and mc not in selected:
@@ -41,8 +43,8 @@ def build_group(rows, backport):
         with log.open('w', encoding='utf-8') as stream:
             result = subprocess.run(command, cwd=ROOT, stdout=stream, stderr=subprocess.STDOUT)
         jar = (ROOT / 'backports/build' / mc / 'libs' if backport else ROOT / 'build/libs') \
-              / f'villager_trade_finder-fabric-{mc}-{version}.jar'
-        row = {'minecraft': mc, 'version': version, 'passed': result.returncode == 0 and jar.exists(),
+              / f'villager_trade_finder-fabric-{mc}-{group_version}.jar'
+        row = {'minecraft': mc, 'version': group_version, 'passed': result.returncode == 0 and jar.exists(),
                'exit_code': result.returncode, 'seconds': round(time.monotonic() - started, 1),
                'jar': str(jar.relative_to(ROOT)), 'log': str(log.relative_to(ROOT))}
         with lock:

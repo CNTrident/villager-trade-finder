@@ -16,8 +16,11 @@
     "issues": "https://github.com/CNTrident/villager-trade-finder/issues"
   },
   "license": "MIT",
-  "environment": "client",
+  "environment": "*",
   "entrypoints": {
+    "main": [
+      "com.uncraftbar.easyautocycler.network.ConfirmedCycleServer"
+    ],
     "client": [
       "com.uncraftbar.easyautocycler.EasyAutoCyclerMod"
     ]

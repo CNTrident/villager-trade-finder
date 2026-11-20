@@ -44,7 +44,15 @@ def generate(mc):
     def key(name): return str(PACKAGE/name).replace('\\','/')
     sources.pop(key('mixin/VillagerTradeAccessor.java'))
     sources.pop(key('mixin/VisibleTradersClientMixin.java'), None)
+    sources.pop(key('mixin/ServerPlayerOffersMixin.java'), None)
     sources.pop(key('gui/CustomImageButton.java'))
+    for path in list(sources):
+        if path.startswith(key('network') + '/'):
+            del sources[path]
+    initializer = sources[key('EasyAutoCyclerMod.java')]
+    sources[key('EasyAutoCyclerMod.java')] = initializer.replace(
+        'import com.uncraftbar.easyautocycler.network.ConfirmedCycleClient;\n', '').replace(
+        '        ConfirmedCycleClient.initialize();\n', '')
 
     item = sources[key('gui/ItemNameResolver.java')]
     for imp in ('com.uncraftbar.easyautocycler.mixin.VillagerTradeAccessor',
@@ -86,7 +94,10 @@ def generate(mc):
     core = sources[key('AutomationManager.java')]
     for imp in ('net.minecraft.core.component.DataComponents','net.minecraft.world.item.enchantment.ItemEnchantments',
                 'net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket',
-                'net.minecraft.network.protocol.common.custom.CustomPacketPayload'):
+                'net.minecraft.network.protocol.common.custom.CustomPacketPayload',
+                'net.minecraft.client.multiplayer.ClientPacketListener',
+                'com.uncraftbar.easyautocycler.network.ConfirmedCycleClient',
+                'com.uncraftbar.easyautocycler.network.ConfirmedCycleOffers'):
         core = core.replace('import '+imp+';\n','')
     core = core.replace('import com.uncraftbar.easyautocycler.compat.MinecraftScreenCompat;',
                         'import com.uncraftbar.easyautocycler.compat.MinecraftScreenCompat;\nimport com.uncraftbar.easyautocycler.compat.StackCompat;\nimport com.uncraftbar.easyautocycler.compat.NativeCycleCompat;')
@@ -95,8 +106,15 @@ def generate(mc):
         public boolean sendCyclePacket() { return NativeCycleCompat.cycle(); }
     }''')
     core = replace_block(core, '    public void onVisibleTradersOffersUpdated(', '')
+    core = replace_block(core, '    public void onConfirmedOffers(', '')
+    core = core.replace('    private long nextConfirmedRound;\n', '')
     core = core.replace('offerUpdate.begin(screen.getMenu().containerId, false, true);', 'offerUpdate.begin(screen.getMenu().containerId, true, false);')
-    core = core.replace('offerUpdate.begin(screen.getMenu().containerId, true, needLockedOffers);', 'offerUpdate.begin(screen.getMenu().containerId, true, false);')
+    core = core.replace('''            int containerId = screen.getMenu().containerId;
+            long round = ConfirmedCycleClient.isAvailable() ? ++nextConfirmedRound : 0;
+            offerUpdate.begin(containerId, true, needLockedOffers, round);''',
+                        '            offerUpdate.begin(screen.getMenu().containerId, true, false);')
+    core = core.replace('''            boolean sent = round != 0 ? ConfirmedCycleClient.send(containerId, round) : sendCyclePacket();
+            if (!sent) {''', '            if (!sendCyclePacket()) {')
     core = replace_block(core, '    private boolean matchesExactItemEnchantments(', '''    private boolean matchesExactItemEnchantments(ItemStack stack, List<FilterEntry.EnchantmentTarget> targets) {
         Map<Identifier, Integer> found = StackCompat.enchantments(stack);
         if (found.size() != targets.size()) return false;
@@ -238,7 +256,11 @@ public final class MinecraftScreenCompat {
         dest.write_text(text,encoding='utf8')
 
     metadata = json.loads((resources/'fabric.mod.json').read_text(encoding='utf8'))
-    metadata['version'] = next(line.split('=',1)[1] for line in (ROOT.parent/'gradle.properties').read_text().splitlines() if line.startswith('mod_version='))
+    properties = dict(line.split('=', 1) for line in (ROOT.parent/'gradle.properties').read_text().splitlines()
+                      if '=' in line and not line.lstrip().startswith('#'))
+    metadata['version'] = properties.get('backport_mod_version', properties['mod_version'])
+    metadata['environment'] = 'client'
+    metadata['entrypoints'].pop('main', None)
     metadata['depends']['minecraft'] = mc
     metadata['depends']['java'] = '>='+str(meta['java'])
     metadata['depends']['fabricloader'] = '>=0.16.0'
@@ -256,6 +278,7 @@ public final class MinecraftScreenCompat {
     (resources/'assets/easyautocycler/villager_trade_items.json').write_text(json.dumps(candidates,indent=2),encoding='utf8')
     mixin = json.loads((resources/'easyautocycler.mixins.json').read_text(encoding='utf8'))
     mixin['client'].remove('VillagerTradeAccessor')
+    mixin.pop('mixins', None)
     if 'VisibleTradersClientMixin' in mixin['client']: mixin['client'].remove('VisibleTradersClientMixin')
     mixin['compatibilityLevel'] = 'JAVA_'+str(meta['java'])
     mixin['refmap'] = 'easyautocycler.refmap.json'

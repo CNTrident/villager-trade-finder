@@ -1,12 +1,12 @@
 {
   "minecraft": "1.21.4",
-  "mod_version": "1.9.2",
+  "mod_version": "1.9.3",
   "java": 21,
   "fabric_api": "0.119.4+1.21.4",
-  "jar": "villager_trade_finder-fabric-1.21.4-1.9.2.jar",
-  "sha256": "4f76bbb5313d91b26e03f1a6df08b0c064105bc092bb8a943106a9f7801ba7c1",
+  "jar": "villager_trade_finder-fabric-1.21.4-1.9.3.jar",
+  "sha256": "0fad6006f29a36f78a56f46186d5df5ef12d6d78607d8b1a306a1dfb197b800c",
   "bytes": 109073,
-  "sources": "villager_trade_finder-fabric-1.21.4-1.9.2-sources.jar",
+  "sources": "villager_trade_finder-fabric-1.21.4-1.9.3-sources.jar",
   "source_directory": "backports/versions/1.21.4",
   "trade_cycling": {
     "version": "fabric-1.21.4-1.0.20",
@@ -26,6 +26,9 @@
     "page": "https://modrinth.com/mod/visible-traders/version/Ynwu5EN7",
     "download": "https://cdn.modrinth.com/data/AhllI99f/versions/Ynwu5EN7/VisibleTraders-0.0.9%2B1.21-1.21.5.jar"
   },
-  "checks": "Gradle build and regression checks passed",
-  "sources_sha256": "7301ac6dba83c21d77ee5a15f4e5fc84651f8d1a9dcb08892056698291cec356"
+  "checks": "Gradle build, matching, configuration, and offer-update regression passed; legacy JAR entries match 1.9.2 except the version metadata.",
+  "sources_sha256": "2aff999e73ae9187aa7bc5072c6aadd741a9f90e9458b32ef77c16357e30231d",
+  "sources_bytes": 51880,
+  "fabric_loader_requirement": ">=0.16.0",
+  "confirmed_refresh": "Legacy client compatibility path with the 50 ms quote-stability window."
 }

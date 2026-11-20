@@ -1,6 +1,5 @@
 # Villager Trade Finder
 
-
 [![CI](https://github.com/CNTrident/villager-trade-finder/actions/workflows/build.yml/badge.svg)](https://github.com/CNTrident/villager-trade-finder/actions/workflows/build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Minecraft](https://img.shields.io/badge/Minecraft-26.3-62B47A)](https://www.minecraft.net/)
@@ -12,12 +11,12 @@
 
 ## 下载
 
-当前源码版本 **1.9.2**，覆盖 Minecraft 1.20～1.21.11 和 26.1～26.3 共 24 个正式版本。
+当前版本 **1.9.3**，覆盖 Minecraft 1.20～1.21.11 和 26.1～26.3 共 24 个正式版本。
 
-- [1.9.1 历史安装包合集](https://github.com/CNTrident/villager-trade-finder/releases/download/v1.9.1/all-24-installers-1.9.1.zip)
-- [1.9.1 历史逐版安装 JAR、源码 JAR 与 SHA-256](https://github.com/CNTrident/villager-trade-finder/releases/tag/v1.9.1)
-- 1.9.2 可按下文构建。成品命名为 `villager_trade_finder-fabric-<Minecraft版本>-1.9.2.jar`，安装时选择对应游戏版本的一份 JAR。
-- [更新记录](VERSION_HISTORY.md)。历史已发布版本保留在 [GitHub Releases](https://github.com/CNTrident/villager-trade-finder/releases)。
+- [1.9.3 全部 24 版安装包合集](https://github.com/CNTrident/villager-trade-finder/releases/download/v1.9.3/all-24-installers-1.9.3.zip)
+- [1.9.3 逐版安装 JAR、源码和 SHA-256](https://github.com/CNTrident/villager-trade-finder/releases/tag/v1.9.3)
+- [1.9.2 历史版本](https://github.com/CNTrident/villager-trade-finder/releases/tag/v1.9.2)。
+- [更新记录](VERSION_HISTORY.md)。已发布版本见 [GitHub Releases](https://github.com/CNTrident/villager-trade-finder/releases)。
 
 1.20～1.21.11 的源码位于 [`backports/versions/`](backports/versions/)，26.x 使用根目录源码与 [`mc26-matrix.json`](mc26-matrix.json) 中的对应兼容目录。源码 ZIP 不用于安装。
 
@@ -39,7 +38,7 @@
 - 新目标输入框使用示例提示；附魔等级和价格会按所选附魔及原版交易范围自动限制。
 - 每个目标可设置附魔名称、精确等级、最低和最高原始绿宝石价格。
 - 价格使用 `MerchantOffer#getBaseCostA()`，不计入治愈/声望/村庄英雄折扣，也不计入需求涨价。
-- 每次只保留一个未完成刷新请求。等本轮交易数据到齐，并在至少 50 毫秒没有新交易回包后再判断。未命中时开始下一轮。
+- 每次只保留一个未完成刷新请求。支持 1.9.3 加速的服务端提供带轮次编号的最终报价，客户端收到本轮需要的全部交易数据后立即判断。普通服务端仍使用 50 毫秒的报价稳定窗口。未命中时开始下一轮。
 - 筛选后续交易时，VisibleTraders 的清空占位包不算完成；必须等真正的后续数据到齐才判断。找到目标后停止，不发送下一次刷新请求。
 - 交易已锁定、服务端不支持、没有目标、网络响应超时或达到 1000000 次安全上限时自动停止。
 - 内置简体中文和英文界面。
@@ -54,7 +53,7 @@
 
 如需匹配“后续交易”或“全部交易”，客户端和服务器还需要安装对应游戏版本的 VisibleTraders；26.1 / 26.1.1 / 26.1.2 对应 2.4.x，26.2 对应 2.5.x，26.3 使用 2.5.1 或兼容新版，旧游戏版本依赖见版本清单。
 
-Villager Trade Finder 仅安装在客户端。多人服务器需要 Trade Cycling 与对应前置；使用后续交易筛选时，服务器也需要 VisibleTraders。单人档在同一个客户端环境准备这些依赖即可。服务器维持原有收包调度和交易生成流程。
+Villager Trade Finder 安装在客户端即可使用。多人服务器需要 Trade Cycling 与对应前置。使用后续交易筛选时，服务器也需要 VisibleTraders。26.x 单人模式自动启用 1.9.3 的带编号报价。26.x 多人服务器可选装同一游戏版本的 1.9.3 JAR 来启用加速。1.20～1.21.11 使用客户端兼容刷新流程。
 游戏运行时，1.20～1.20.4 使用 Java 17，1.20.5～1.21.11 使用 Java 21，26.1～26.3 使用 Java 25。26.3 搭配 Trade Cycling 1.0.23 时需 Fabric Loader 0.19.3 或更新版本。构建本项目使用 Java 25。不要跨 Minecraft 版本混用 JAR。
 
 ### 使用注意事项
@@ -104,7 +103,7 @@ python scripts/build_all_versions.py
 python scripts/verify_low_latency.py --java "Java25/bin/java.exe" --visible-traders "Visible Traders-2.5.1-universal.jar"
 ```
 
-26.x 产物位于 `build/libs/`，旧版本位于 `backports/build/<Minecraft版本>/libs/`。全版本检查日志保留在 `build/matrix-1.9.2/`。构建脚本默认使用本地依赖缓存；首次下载依赖时添加 `--online`。26.x 参数见 [`mc26-matrix.json`](mc26-matrix.json)，旧版参数见 [`backports/matrix.json`](backports/matrix.json)。
+26.x 产物位于 `build/libs/`，旧版本位于 `backports/build/<Minecraft版本>/libs/`。全版本检查日志保留在 `build/matrix-1.9.3/`。构建脚本默认使用本地依赖缓存；首次下载依赖时添加 `--online`。26.x 参数见 [`mc26-matrix.json`](mc26-matrix.json)，旧版参数见 [`backports/matrix.json`](backports/matrix.json)。
 
 ## 开源来源与许可
 

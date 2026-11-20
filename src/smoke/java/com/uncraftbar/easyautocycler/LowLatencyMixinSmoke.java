@@ -24,10 +24,13 @@ public final class LowLatencyMixinSmoke implements PreLaunchEntrypoint {
                     Class.forName("net.ramixin.visibletraders.client.VisibleTradersCommonClient");
                     ClientTradeReadinessSmoke.run();
                 }
-            } else if (FabricLoader.getInstance().isModLoaded("librarian_trade_cycler")) {
-                throw new AssertionError("Client-only mod should not load on a dedicated server");
+            } else {
+                if (!FabricLoader.getInstance().isModLoaded("librarian_trade_cycler")) {
+                    throw new AssertionError("Confirmed refresh server support should load on a dedicated server");
+                }
+                Class.forName("net.minecraft.server.level.ServerPlayer");
             }
-            String result = "PASS: " + (client ? "client mixins and complete-response gating" : "client-only mod ignored on server")
+            String result = "PASS: " + (client ? "client mixins and complete-response gating" : "server offer hook loaded")
                     + ", VisibleTraders=" + FabricLoader.getInstance().isModLoaded("visibletraders") + "\n";
             Files.writeString(Path.of("smoke-result.txt"), result);
             System.out.println(result);
