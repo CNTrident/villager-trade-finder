@@ -1,6 +1,7 @@
 package com.uncraftbar.easyautocycler;
 
 import com.mojang.logging.LogUtils;
+import com.uncraftbar.easyautocycler.network.ConfirmedCycleClient;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 
@@ -15,6 +16,7 @@ public class EasyAutoCyclerMod implements ClientModInitializer {
     public void onInitializeClient() {
         LOGGER.info("EasyAutoCyclerMod loaded! (Fabric)");
 
+        ConfirmedCycleClient.initialize();
         AutomationManager.initialize();
 
         Keybindings.registerKeyMappings();

@@ -1,5 +1,16 @@
 # Villager Trade Finder validation
 
+## 1.9.4 · Numbered refresh on all 24 Minecraft versions
+
+Validated on 2026-11-20. The [version manifest](release-manifests/1.9.4.json) lists installer and source hashes for all 24 games.
+
+- All 24 Gradle builds passed the matching and offer-state regressions. Backports and 26.x use the same state tests for stale or duplicate replies, incorrect menu IDs, delayed data, and one outstanding request.
+- Minecraft 1.20.1 with Trade Cycling 1.0.18 and VisibleTraders 0.0.4 completed 30 numbered refreshes in a temporary integrated world. Each server generation produced one numbered quote and the client evaluated each round once.
+- Minecraft 1.21.1 with Trade Cycling 1.0.23 and VisibleTraders 1.3.2 repeated the same 30-round exercise over the newer Fabric payload API. Both scenarios matched a real later-only lantern offer and confirmed that no request followed the hit and that the offer remained on the open menu.
+- All five 26.x archives were compared with their 1.9.3 releases. Only the embedded version changed. Their gameplay and loopback evidence is recorded below.
+
+The new in-game backport checks ran on the integrated server with Java 25. Compile target versions and final packaged mappings were verified for all supported variants. Dedicated multiplayer and WAN timing were outside the new backport gameplay checks.
+
 ## 1.9.3 · All 24 Minecraft versions
 
 Validated on 2026-11-20. The [version manifest](release-manifests/1.9.3.json) lists 24 Minecraft versions and the SHA-256 of each installer and source JAR.

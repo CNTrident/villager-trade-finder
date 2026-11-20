@@ -5,11 +5,14 @@
   "client": [
     "MinecraftTickMixin",
     "ClientPacketListenerMixin",
-    "MerchantMenuAccessor",
     "VillagerInteractionMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
-  "refmap": "easyautocycler.refmap.json"
+  "refmap": "easyautocycler.refmap.json",
+  "mixins": [
+    "MerchantOfferSendMixin",
+    "MerchantMenuAccessor"
+  ]
 }

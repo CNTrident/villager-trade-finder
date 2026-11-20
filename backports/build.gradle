@@ -11,18 +11,34 @@ base { archivesName = "villager_trade_finder-fabric-${mc}" }
 layout.buildDirectory = file("build/${mc}")
 def codeRoot = !providers.gradleProperty('generated').isPresent() && file("versions/${mc}").isDirectory()
         ? "versions/${mc}" : "generated/${mc}"
+def bufferedPayload = mc in ['1.20', '1.20.1', '1.20.2', '1.20.3', '1.20.4']
+def originalServerListener = mc in ['1.20', '1.20.1']
+def offerState = objects.sourceDirectorySet('offerState', 'Shared offer update state')
+offerState.srcDir('../src/main/java').include('**/OfferUpdateState.java')
+def offerTests = objects.sourceDirectorySet('offerTests', 'Shared offer update tests')
+offerTests.srcDir('../src/test/java').include('**/OfferUpdateChecks.java')
 sourceSets {
     main {
-        java.setSrcDirs(["${codeRoot}/java"])
+        java.setSrcDirs(["${codeRoot}/java", 'confirmed/common/java',
+                         bufferedPayload ? 'confirmed/legacy/java' : 'confirmed/modern/java',
+                         originalServerListener ? 'confirmed/listener-1.20/java' : 'confirmed/listener-1.20.2/java'])
+        if (!bufferedPayload) {
+            java.srcDir(mc == '1.21.11' ? 'confirmed/identifier/java' : 'confirmed/resource-location/java')
+        }
+        java.source(offerState)
         resources.setSrcDirs(["${codeRoot}/resources"])
     }
-    test { java.setSrcDirs(["${codeRoot}/tests"]) }
+    test {
+        java.setSrcDirs(["${codeRoot}/tests"])
+        java.source(offerTests)
+    }
 }
 dependencies {
     minecraft "com.mojang:minecraft:${mc}"
     mappings loom.officialMojangMappings()
     modImplementation 'net.fabricmc:fabric-loader:0.18.6'
     modImplementation fabricApi.module('fabric-api-base', entry.fabric_api)
+    modImplementation fabricApi.module('fabric-networking-api-v1', entry.fabric_api)
     modImplementation fabricApi.module('fabric-key-binding-api-v1', entry.fabric_api)
     modImplementation fabricApi.module('fabric-screen-api-v1', entry.fabric_api)
     compileOnly 'org.jspecify:jspecify:1.0.0'

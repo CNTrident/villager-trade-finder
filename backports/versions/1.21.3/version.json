@@ -1,12 +1,12 @@
 {
   "minecraft": "1.21.3",
-  "mod_version": "1.9.3",
+  "mod_version": "1.9.4",
   "java": 21,
   "fabric_api": "0.114.1+1.21.3",
-  "jar": "villager_trade_finder-fabric-1.21.3-1.9.3.jar",
-  "sha256": "92164c613edac2930523a42c3667180ec127b73cb21a23dc06c2712c1706cf06",
-  "bytes": 109073,
-  "sources": "villager_trade_finder-fabric-1.21.3-1.9.3-sources.jar",
+  "jar": "villager_trade_finder-fabric-1.21.3-1.9.4.jar",
+  "sha256": "b09aa375148ff102132eb4898169e426406863733c0bbdfe01870fa04281b4b1",
+  "bytes": 127268,
+  "sources": "villager_trade_finder-fabric-1.21.3-1.9.4-sources.jar",
   "source_directory": "backports/versions/1.21.3",
   "trade_cycling": {
     "version": "fabric-1.21.3-1.0.15",
@@ -26,9 +26,9 @@
     "page": "https://modrinth.com/mod/visible-traders/version/Ynwu5EN7",
     "download": "https://cdn.modrinth.com/data/AhllI99f/versions/Ynwu5EN7/VisibleTraders-0.0.9%2B1.21-1.21.5.jar"
   },
-  "checks": "Gradle build, matching, configuration, and offer-update regression passed; legacy JAR entries match 1.9.2 except the version metadata.",
-  "sources_sha256": "3eb79563df52ec095c5543e6249d6d53da463e85247ec0e7fdebb122c4151ece",
-  "sources_bytes": 51880,
+  "checks": "Gradle build, matching and numbered offer-state regression passed.",
+  "sources_sha256": "62f286fb86748c0f523ab3e8bb05e70ffd09180e80d502d6451092ba6ef88420",
+  "sources_bytes": 59524,
   "fabric_loader_requirement": ">=0.16.0",
-  "confirmed_refresh": "Legacy client compatibility path with the 50 ms quote-stability window."
+  "confirmed_refresh": "Enabled in singleplayer and on multiplayer when the same Minecraft build is installed on both sides."
 }

@@ -2,6 +2,7 @@ package com.uncraftbar.easyautocycler;
 
 import com.uncraftbar.easyautocycler.config.FilterConfig;
 import com.uncraftbar.easyautocycler.compat.MinecraftScreenCompat;
+import com.uncraftbar.easyautocycler.network.ConfirmedCycleClient;
 import com.uncraftbar.easyautocycler.compat.StackCompat;
 import com.uncraftbar.easyautocycler.compat.NativeCycleCompat;
 import com.uncraftbar.easyautocycler.compat.VisibleTradersCompat;
@@ -9,6 +10,7 @@ import com.uncraftbar.easyautocycler.filter.FilterEntry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MerchantScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -17,6 +19,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.network.protocol.game.ClientboundMerchantOffersPacket;
 import net.minecraft.world.inventory.MerchantMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -47,6 +50,7 @@ public class AutomationManager {
     private final OfferUpdateState offerUpdate = new OfferUpdateState();
     @Nullable private MerchantMenu runningMenu;
     private int waitingForOfferTicks = 0;
+    private long nextConfirmedRound;
     private int currentCycles = 0;
     private static final int MAX_CYCLES_SAFETY = 1_000_000;
     private static final int OFFER_UPDATE_TIMEOUT_TICKS = 100;
@@ -357,12 +361,7 @@ public class AutomationManager {
         if (!offerUpdate.isPending()) return;
 
         if (offerUpdate.finishIfSettled(System.nanoTime())) {
-            waitingForOfferTicks = 0;
-            if (isRunning.get() && currentScreen instanceof MerchantScreen screen) {
-                evaluateAndMaybeCycle(screen);
-            } else {
-                clearTrackedMenu();
-            }
+            completeRound(currentScreen);
         } else if (++waitingForOfferTicks >= OFFER_UPDATE_TIMEOUT_TICKS) {
             if (isRunning.get()) {
                 this.sendMessageToPlayer(Component.translatable(offerUpdate.isWaitingForLockedOffers()
@@ -372,6 +371,34 @@ public class AutomationManager {
             clearTrackedMenu();
             stop("Merchant offers update timed out");
         }
+    }
+
+    private void completeRound(Screen currentScreen) {
+        waitingForOfferTicks = 0;
+        if (isRunning.get() && currentScreen instanceof MerchantScreen screen && screen.getMenu() == runningMenu) {
+            evaluateAndMaybeCycle(screen);
+        } else {
+            clearTrackedMenu();
+            stop("Trade screen closed or replaced");
+        }
+    }
+
+    public void onConfirmedOffers(long round, ClientboundMerchantOffersPacket offers, ClientPacketListener listener) {
+        Minecraft client = Minecraft.getInstance();
+        int containerId = offers.getContainerId();
+        if (client.getConnection() != listener || client.player == null || client.player.containerMenu != runningMenu
+                || !offerUpdate.expectsConfirmation(containerId, round)) return;
+
+        // The final vanilla packet contains both sets on legacy VisibleTraders.
+        offers.handle(listener);
+        offerUpdate.onConfirmation(containerId, round);
+        if (!offerUpdate.finishIfConfirmed()) return;
+        if (isRunning.get() && requiresFutureOffers() && !VisibleTradersCompat.captureOffers(runningMenu).lockedOffersReady()) {
+            this.sendMessageToPlayer(Component.translatable("chat.easyautocycler.error.visibletraders_timeout"));
+            stop("Confirmed quote did not provide later offers");
+            return;
+        }
+        completeRound(MinecraftScreenCompat.getScreen(client));
     }
 
     public void onMerchantOffersUpdated(int containerId) {
@@ -394,7 +421,8 @@ public class AutomationManager {
         VisibleTradersCompat.OfferSets offerSets = needLockedOffers
                 ? VisibleTradersCompat.captureOffers(screen.getMenu())
                 : VisibleTradersCompat.captureInitialOffers(screen.getMenu());
-        if (needLockedOffers && !offerSets.lockedOffersReady()) {
+        boolean readyToMatch = !needLockedOffers || offerSets.lockedOffersReady();
+        if (!readyToMatch && (!ConfirmedCycleClient.isAvailable() || offerSets.initial().isEmpty())) {
             offerUpdate.begin(screen.getMenu().containerId, true, false);
             waitingForOfferTicks = 0;
             return;
@@ -405,7 +433,7 @@ public class AutomationManager {
                 .filter(FilterEntry::isEnabled)
                 .collect(Collectors.toList());
 
-        if (!enabledFilters.isEmpty() && checkTradesWithFilters(offerSets)) {
+        if (readyToMatch && !enabledFilters.isEmpty() && checkTradesWithFilters(offerSets)) {
             int autoDisabledCount = disableMatchedAutoFilters();
             Component message;
             if (activeMatchAny()) {
@@ -459,10 +487,13 @@ public class AutomationManager {
                 return;
             }
 
-            offerUpdate.begin(screen.getMenu().containerId, true, false);
+            int containerId = screen.getMenu().containerId;
+            long round = ConfirmedCycleClient.isAvailable() ? ++nextConfirmedRound : 0;
+            offerUpdate.begin(containerId, true, false, round);
             waitingForOfferTicks = 0;
             currentCycles++;
-            if (!sendCyclePacket()) {
+            boolean sent = round != 0 ? ConfirmedCycleClient.send(containerId, round, needLockedOffers) : sendCyclePacket();
+            if (!sent) {
                 offerUpdate.reset();
                 this.sendMessageToPlayer(Component.translatable("chat.easyautocycler.error.network")
                         .withStyle(ChatFormatting.RED));
